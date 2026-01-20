@@ -56,9 +56,11 @@ describe('JobPostService', () => {
             const recruiterObjectId = new ObjectId();
             const createJobPostDto: CreateJobPostDto = {
                 title: 'Senior Developer',
-                companyName: 'Tech Corp',
+                employmentType: 'Full-time',
                 requirements: 'Experience with Node.js',
                 industries: 'Technology',
+                jobFunction: 'Software Engineering',
+                seniorityLevel: 'Senior',
             };
 
             const mockRecruiter = {
@@ -97,9 +99,11 @@ describe('JobPostService', () => {
             const recruiterId = new ObjectId().toString();
             const createJobPostDto: CreateJobPostDto = {
                 title: 'Senior Developer',
-                companyName: 'Tech Corp',
+                employmentType: 'Full-time',
                 requirements: 'Experience with Node.js',
                 industries: 'Technology',
+                jobFunction: 'Software Engineering',
+                seniorityLevel: 'Senior',
             };
 
             mockRecruiterRepository.findOne.mockResolvedValue(null);
@@ -119,9 +123,11 @@ describe('JobPostService', () => {
                 {
                     _id: new ObjectId(),
                     title: 'Job 1',
-                    companyName: 'Company 1',
+                    employmentType: 'Full-time',
                     requirements: 'Requirements 1',
                     industries: 'Industry 1',
+                    jobFunction: 'Software Engineering',
+                    seniorityLevel: 'Senior',
                     recruiterId: new ObjectId(),
                     createdAt: new Date(),
                     updatedAt: new Date(),
@@ -130,9 +136,11 @@ describe('JobPostService', () => {
                 {
                     _id: new ObjectId(),
                     title: 'Job 2',
-                    companyName: 'Company 2',
+                    employmentType: 'Full-time',
                     requirements: 'Requirements 2',
                     industries: 'Industry 2',
+                    jobFunction: 'Software Engineering',
+                    seniorityLevel: 'Senior',
                     recruiterId: new ObjectId(),
                     createdAt: new Date(),
                     updatedAt: new Date(),
@@ -165,9 +173,11 @@ describe('JobPostService', () => {
             const mockJobPost = {
                 _id: new ObjectId(jobPostId),
                 title: 'Test Job',
-                companyName: 'Test Company',
+                employmentType: 'Full-time',
                 requirements: 'Test Requirements',
                 industries: 'Test Industry',
+                jobFunction: 'Software Engineering',
+                seniorityLevel: 'Senior',
                 recruiterId: new ObjectId(),
                 createdAt: new Date(),
                 updatedAt: new Date(),
@@ -205,9 +215,11 @@ describe('JobPostService', () => {
             const existingJobPost = {
                 _id: new ObjectId(jobPostId),
                 title: 'Original Title',
-                companyName: 'Test Company',
+                employmentType: 'Full-time',
                 requirements: 'Original Requirements',
                 industries: 'Test Industry',
+                jobFunction: 'Software Engineering',
+                seniorityLevel: 'Senior',
                 recruiterId: new ObjectId(),
                 createdAt: new Date(),
                 updatedAt: new Date(),
@@ -256,9 +268,11 @@ describe('JobPostService', () => {
             const mockJobPost = {
                 _id: new ObjectId(jobPostId),
                 title: 'Test Job',
-                companyName: 'Test Company',
+                employmentType: 'Full-time',
                 requirements: 'Test Requirements',
                 industries: 'Test Industry',
+                jobFunction: 'Software Engineering',
+                seniorityLevel: 'Senior',
                 recruiterId: new ObjectId(),
                 createdAt: new Date(),
                 updatedAt: new Date(),
@@ -288,9 +302,11 @@ describe('JobPostService', () => {
             const mockJobPost = {
                 _id: new ObjectId(),
                 title: 'Test Job',
-                companyName: 'Test Company',
+                employmentType: 'Full-time',
                 requirements: 'Test Requirements',
                 industries: 'Test Industry',
+                jobFunction: 'Software Engineering',
+                seniorityLevel: 'Senior',
                 recruiterId: new ObjectId(),
                 createdAt: new Date(),
                 updatedAt: new Date(),

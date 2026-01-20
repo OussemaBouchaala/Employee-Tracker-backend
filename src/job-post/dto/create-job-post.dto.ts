@@ -7,7 +7,7 @@ export class CreateJobPostDto {
 
     @IsNotEmpty()
     @IsString()
-    companyName: string;
+    employmentType: string;
 
     @IsNotEmpty()
     @IsString()
@@ -16,4 +16,12 @@ export class CreateJobPostDto {
     @IsNotEmpty()
     @IsString()
     industries: string;
+
+    @IsNotEmpty()
+    @IsString()
+    jobFunction: string;
+
+    @IsNotEmpty()
+    @IsString()
+    seniorityLevel: string;
 }
