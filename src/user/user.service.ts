@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { API_URL } from '../config/api/api_url';
 import { HttpService } from '@nestjs/axios';
 import { Observable, map } from 'rxjs';
 import FormData from 'form-data';
@@ -7,7 +8,7 @@ import FormData from 'form-data';
 export class UserService {
   constructor(private readonly httpService: HttpService) {}
   testing_api():Observable<JSON> {
-    return this.httpService.get('http://127.0.0.1:8000/testing-api').pipe(map(res => res.data));
+    return this.httpService.get(API_URL.testingAPIURL).pipe(map(res => res.data));
   
     
   }
@@ -19,9 +20,14 @@ export class UserService {
     formData.append('UserId', userId);
 
     return this.httpService
-      .post('http://127.0.0.1:8000/addUser', formData, {
+      .post(API_URL.addUserURL, formData, {
         headers: formData.getHeaders(),
       })
       .pipe(map(res => res.data));
   }
+
+
+
+
+ 
 }
