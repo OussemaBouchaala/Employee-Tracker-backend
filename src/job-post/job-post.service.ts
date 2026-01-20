@@ -22,12 +22,12 @@ export class JobPostService {
         private recruiterRepository: Repository<Recruiter>,
     ) { }
  testing_api():Observable<JSON> {
-    return this.httpService.get(API_URL.testingAPIURL).pipe(map(res => res.data));;
+    return this.httpService.get(API_URL.testingAPIURL).pipe(map(res => res.data));
   
     
   }
    find_candidates(jobPost:FindCandidateDto,amount:number):Observable<JSON> {
-    return this.httpService.post(API_URL.getCandidatesURL, {'jobpost': jobPost, 'amount': amount }).pipe(map(res => res.data));;
+    return this.httpService.post(API_URL.getCandidatesURL, {'jobpost': jobPost, 'amount': amount }).pipe(map(res => res.data));
   
     
   }
