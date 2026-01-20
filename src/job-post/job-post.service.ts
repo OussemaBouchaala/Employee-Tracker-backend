@@ -6,17 +6,30 @@ import { JobPost } from './entities/jobPost.entity';
 import { CreateJobPostDto } from './dto/create-job-post.dto';
 import { UpdateJobPostDto } from './dto/update-job-post.dto';
 import { Recruiter } from '../user/entities/recruiter.entity';
-import { UserRole } from '../config/user/userRole';
 
+import { HttpService } from '@nestjs/axios';
+import { map, Observable } from 'rxjs';
+import { FindCandidateDto } from './dto/find-candidate.dto';
 @Injectable()
 export class JobPostService {
+     
     constructor(
+        private readonly httpService: HttpService,
         @InjectRepository(JobPost)
         private jobPostRepository: Repository<JobPost>,
         @InjectRepository(Recruiter)
         private recruiterRepository: Repository<Recruiter>,
     ) { }
-
+ testing_api():Observable<JSON> {
+    return this.httpService.get('http://127.0.0.1:8000/testing-api').pipe(map(res => res.data));;
+  
+    
+  }
+   find_candidates(jobPost:FindCandidateDto,amount:number):Observable<JSON> {
+    return this.httpService.post('http://127.0.0.1:8000/getCandidates', {'jobpost': jobPost, 'amount': amount }).pipe(map(res => res.data));;
+  
+    
+  }
     async create(createJobPostDto: CreateJobPostDto, userId:string): Promise<JobPost> {
         const recruiter = await this.recruiterRepository.findOne({ where: { userId: new ObjectId(userId) } as any });
         if (!recruiter) {

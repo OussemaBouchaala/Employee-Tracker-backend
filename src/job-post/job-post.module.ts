@@ -6,9 +6,9 @@ import { JobPostService } from './job-post.service';
 import { JobPostController } from './job-post.controller';
 import { IsRecruiterOrAdminGuard } from './guards/is-recruiter-or-admin/is-recruiter-or-admin.guard';
 import { IsOwnerOrAdminGuard } from './guards/is-owner-or-admin/is-owner-or-admin.guard';
-
+import { HttpModule } from '@nestjs/axios';
 @Module({
-    imports: [TypeOrmModule.forFeature([JobPost, Recruiter])],
+    imports: [HttpModule,TypeOrmModule.forFeature([JobPost, Recruiter])],
     controllers: [JobPostController],
     providers: [JobPostService, IsRecruiterOrAdminGuard, IsOwnerOrAdminGuard],
     exports: [JobPostService],

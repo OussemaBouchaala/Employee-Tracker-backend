@@ -6,7 +6,7 @@ export class JobPost extends Timestamp {
     @ObjectIdColumn()
     _id: ObjectId;
 
-    @Column()
+     @Column()
     companyName: string;
 
     @Column()
