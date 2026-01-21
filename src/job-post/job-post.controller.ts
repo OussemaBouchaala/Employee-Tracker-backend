@@ -55,11 +55,6 @@ export class JobPostController {
         return this.jobPostService.create(createJobPostDto, req.user._id);
     }
 
-    @Get()
-    findAll() {
-        return this.jobPostService.findAll();
-    }
-
     @Get(':id')
     findOne(@Param('id') id: string) {
         return this.jobPostService.findOne(id);

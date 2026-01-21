@@ -27,9 +27,6 @@ export class JobPostService {
         private candidateRepository: Repository<Candidate>,
     ) { }
   
-  findAll(): Promise<JobPost[]> {
-    return this.jobPostRepository.find();
-  }
 
  testing_api():Observable<JSON> {
     return this.httpService.get(API_URL.testingAPIURL).pipe(map(res => res.data));
@@ -107,7 +104,7 @@ export class JobPostService {
         return this.jobPostRepository.save(jobPost);
     }
 
-    async findAll(): Promise<JobPost[]> {
+    findAll(): Promise<JobPost[]> {
         return this.jobPostRepository.find({
             relations: ['recruiter', 'recruiter.user', 'jobPostCandidates'],
         });
