@@ -8,6 +8,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { JobPostModule } from './job-post/job-post.module';
 import { UserModule } from './user/user.module';
+import { NotificationService } from './notification/notification.service';
+import { NotificationController } from './notification/notification.controller';
 
 @Module({
   imports: [
@@ -22,7 +24,7 @@ import { UserModule } from './user/user.module';
       autoLoadEntities: true,
     }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, NotificationController],
+  providers: [AppService, NotificationService],
 })
 export class AppModule { }

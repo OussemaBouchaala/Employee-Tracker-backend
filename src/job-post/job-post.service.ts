@@ -27,7 +27,7 @@ export class JobPostService {
         private candidateRepository: Repository<Candidate>,
     ) { }
  testing_api():Observable<JSON> {
-    return this.httpService.get(API_URL.testingAPIURL).pipe(map(res => res.data));;
+    return this.httpService.get(API_URL.testingAPIURL).pipe(map(res => res.data));
   
     
   }
