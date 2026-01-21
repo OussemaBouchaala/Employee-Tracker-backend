@@ -9,6 +9,12 @@ import { IsOwnerOrAdminGuard } from './guards/is-owner-or-admin/is-owner-or-admi
 @Controller('job-posts')
 export class JobPostController {
     constructor(private readonly jobPostService: JobPostService) { }
+
+    @Get()
+    findAll() {
+        return this.jobPostService.findAll();
+    }
+
     @Get('testing-api')
     testing_api() {
        
