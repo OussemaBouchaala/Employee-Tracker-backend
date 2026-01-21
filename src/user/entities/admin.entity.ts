@@ -1,4 +1,5 @@
-import { Column, Entity, ObjectIdColumn, ObjectId } from "typeorm";
+import { Column, Entity, ObjectIdColumn, ObjectId, OneToOne } from "typeorm";
+import { User } from "./user.entity";
 
 @Entity()
 export class Admin {
@@ -7,4 +8,7 @@ export class Admin {
 
   @Column(() => String)
   userId: ObjectId;
+
+  @OneToOne(() => User, (user) => user.admin)
+  user: User;
 }

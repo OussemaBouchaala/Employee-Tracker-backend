@@ -1,4 +1,6 @@
-import { Column, Entity, ObjectIdColumn, ObjectId } from "typeorm";
+import { Column, Entity, ObjectIdColumn, ObjectId, OneToOne, OneToMany } from "typeorm";
+import { User } from "./user.entity";
+import { JobPost } from "../../job-post/entities/jobPost.entity";
 
 @Entity()
 export class Recruiter {
@@ -10,4 +12,10 @@ export class Recruiter {
 
   @Column()
   companyName: string;
+
+  @OneToOne(() => User, (user) => user.recruiter)
+  user: User;
+
+  @OneToMany(() => JobPost, (jobPost) => jobPost.recruiter)
+  jobPosts: JobPost[];
 }

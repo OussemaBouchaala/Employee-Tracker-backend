@@ -4,7 +4,7 @@ import { CreateJobPostDto } from './dto/create-job-post.dto';
 import { UpdateJobPostDto } from './dto/update-job-post.dto';
 import { IsRecruiterOrAdminGuard } from './guards/is-recruiter-or-admin/is-recruiter-or-admin.guard';
 import { IsOwnerOrAdminGuard } from './guards/is-owner-or-admin/is-owner-or-admin.guard';
-import { FindCandidateDto } from './dto/find-candidate.dto';
+
 
 @Controller('job-posts')
 export class JobPostController {
@@ -15,9 +15,32 @@ export class JobPostController {
         return this.jobPostService.testing_api();
     }
     @Post('getCandidates')
-    getcandidates(@Body('jobpost') jobpost:FindCandidateDto,@Body('amount') amount:number) {
-       
+    getcandidates(@Body('jobpost') jobpost:CreateJobPostDto,@Body('amount') amount:number) {
         return this.jobPostService.find_candidates(jobpost,amount);
+    }
+
+    @UseGuards(IsRecruiterOrAdminGuard)
+    @Post(':id/find-and-match-candidates')
+    async findAndMatchCandidates(
+        @Param('id') jobPostId: string,
+        @Body('amount') amount: number
+    ) {
+        return this.jobPostService.findAndCreateCandidateMatches(jobPostId, amount);
+    }
+
+    @UseGuards(IsRecruiterOrAdminGuard)
+    @Post(':id/add-candidate')
+    async addCandidateToJobPost(
+        @Param('id') jobPostId: string,
+        @Body('candidateId') candidateId: string,
+        @Body('score') score: number
+    ) {
+        return this.jobPostService.addCandidateToJobPost(jobPostId, candidateId, score);
+    }
+
+    @Get(':id/candidates')
+    async getCandidatesForJobPost(@Param('id') jobPostId: string) {
+        return this.jobPostService.getCandidatesForJobPost(jobPostId);
     }
 
     @UseGuards(IsRecruiterOrAdminGuard)

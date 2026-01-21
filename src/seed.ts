@@ -5,6 +5,7 @@ import { Admin } from "./user/entities/admin.entity";
 import { Recruiter } from "./user/entities/recruiter.entity";
 import { Candidate } from "./user/entities/candidate.entity";
 import { JobPost } from "./job-post/entities/jobPost.entity";
+import { JobPostCandidate } from "./job-post/entities/jobPostCandidate.entity";
 import { UserRole } from './config/user/userRole';
 
 
@@ -14,7 +15,7 @@ const AppDataSource = new DataSource({
     database: 'projettp',
     synchronize: true,
     logging: true,
-    entities: [User, Admin, Recruiter, Candidate, JobPost],
+    entities: [User, Admin, Recruiter, Candidate, JobPost, JobPostCandidate],
 });
 
 async function seed() {
@@ -27,6 +28,7 @@ async function seed() {
         const recruiterRepository = AppDataSource.getRepository(Recruiter);
         const candidateRepository = AppDataSource.getRepository(Candidate);
         const jobPostRepository = AppDataSource.getRepository(JobPost);
+        const jobPostCandidateRepository = AppDataSource.getRepository(JobPostCandidate);
 
         // --- Seed Admin ---
         console.log('Seeding Admin...');
@@ -41,6 +43,7 @@ async function seed() {
 
         const admin = new Admin();
         admin.userId = adminUser._id;
+        admin.user = adminUser;
         await adminRepository.save(admin);
         console.log('Admin seeded.');
 
@@ -58,6 +61,7 @@ async function seed() {
         const recruiter = new Recruiter();
         recruiter.userId = recruiterUser._id;
         recruiter.companyName = 'Tech Corp';
+        recruiter.user = recruiterUser;
         await recruiterRepository.save(recruiter);
         console.log('Recruiter 1 seeded.');
 
@@ -75,6 +79,7 @@ async function seed() {
         const recruiter2 = new Recruiter();
         recruiter2.userId = recruiterUser2._id;
         recruiter2.companyName = 'Innovation Labs';
+        recruiter2.user = recruiterUser2;
         await recruiterRepository.save(recruiter2);
         console.log('Recruiter 2 seeded.');
 
@@ -93,6 +98,7 @@ async function seed() {
         candidate.userId = candidateUser._id;
         candidate.cv = 'http://example.com/cv.pdf';
         candidate.description = 'Experienced developer looking for a job.';
+        candidate.user = candidateUser;
         await candidateRepository.save(candidate);
         console.log('Candidate seeded.');
 
@@ -102,49 +108,93 @@ async function seed() {
         // Job Post 1 - From Recruiter 1
         const jobPost1 = new JobPost();
         jobPost1.title = 'Senior Full Stack Developer';
-        jobPost1.companyName = 'Tech Corp';
+        jobPost1.employmentType = 'Full-time';
         jobPost1.requirements = 'Bachelor\'s degree in Computer Science, 5+ years experience with React, Node.js, and MongoDB. Strong problem-solving skills.';
         jobPost1.industries = 'Technology, Software Development';
+        jobPost1.jobFunction = 'Software Engineering';
+        jobPost1.seniorityLevel = 'Senior';
         jobPost1.recruiterId = recruiter._id;
+        jobPost1.recruiter = recruiter;
         await jobPostRepository.save(jobPost1);
 
         // Job Post 2 - From Recruiter 1
         const jobPost2 = new JobPost();
         jobPost2.title = 'DevOps Engineer';
-        jobPost2.companyName = 'Tech Corp';
+        jobPost2.employmentType = 'Full-time';
         jobPost2.requirements = 'Experience with AWS, Docker, Kubernetes, CI/CD pipelines. 3+ years in DevOps role.';
         jobPost2.industries = 'Technology, Cloud Computing';
+        jobPost2.jobFunction = 'DevOps';
+        jobPost2.seniorityLevel = 'Mid-Senior';
         jobPost2.recruiterId = recruiter._id;
+        jobPost2.recruiter = recruiter;
         await jobPostRepository.save(jobPost2);
 
         // Job Post 3 - From Recruiter 2
         const jobPost3 = new JobPost();
         jobPost3.title = 'Frontend Developer';
-        jobPost3.companyName = 'Innovation Labs';
+        jobPost3.employmentType = 'Full-time';
         jobPost3.requirements = 'Expert knowledge of React, TypeScript, and modern CSS frameworks. 3+ years experience.';
         jobPost3.industries = 'Technology, UI/UX';
+        jobPost3.jobFunction = 'Frontend Engineering';
+        jobPost3.seniorityLevel = 'Mid-Senior';
         jobPost3.recruiterId = recruiter2._id;
+        jobPost3.recruiter = recruiter2;
         await jobPostRepository.save(jobPost3);
 
         // Job Post 4 - From Recruiter 2
         const jobPost4 = new JobPost();
         jobPost4.title = 'Data Scientist';
-        jobPost4.companyName = 'Innovation Labs';
+        jobPost4.employmentType = 'Full-time';
         jobPost4.requirements = 'PhD or Master\'s in Data Science, Machine Learning, or related field. Experience with Python, TensorFlow, and big data technologies.';
         jobPost4.industries = 'Technology, AI/ML, Data Analytics';
+        jobPost4.jobFunction = 'Data Science';
+        jobPost4.seniorityLevel = 'Senior';
         jobPost4.recruiterId = recruiter2._id;
+        jobPost4.recruiter = recruiter2;
         await jobPostRepository.save(jobPost4);
 
         // Job Post 5 - From Recruiter 1
         const jobPost5 = new JobPost();
         jobPost5.title = 'Product Manager';
-        jobPost5.companyName = 'Tech Corp';
+        jobPost5.employmentType = 'Full-time';
         jobPost5.requirements = 'MBA preferred, 5+ years in product management. Strong leadership and communication skills.';
         jobPost5.industries = 'Technology, Product Management';
+        jobPost5.jobFunction = 'Product Management';
+        jobPost5.seniorityLevel = 'Senior';
         jobPost5.recruiterId = recruiter._id;
+        jobPost5.recruiter = recruiter;
         await jobPostRepository.save(jobPost5);
 
         console.log('Job Posts seeded.');
+
+        // --- Seed Job Post Candidates (Applications) ---
+        console.log('Seeding Job Post Candidates...');
+
+        const jobPostCandidate1 = new JobPostCandidate();
+        jobPostCandidate1.jobPostId = jobPost1._id;
+        jobPostCandidate1.candidateId = candidate._id;
+        jobPostCandidate1.score = 85;
+        jobPostCandidate1.jobPost = jobPost1;
+        jobPostCandidate1.candidate = candidate;
+        await jobPostCandidateRepository.save(jobPostCandidate1);
+
+        const jobPostCandidate2 = new JobPostCandidate();
+        jobPostCandidate2.jobPostId = jobPost3._id;
+        jobPostCandidate2.candidateId = candidate._id;
+        jobPostCandidate2.score = 92;
+        jobPostCandidate2.jobPost = jobPost3;
+        jobPostCandidate2.candidate = candidate;
+        await jobPostCandidateRepository.save(jobPostCandidate2);
+
+        const jobPostCandidate3 = new JobPostCandidate();
+        jobPostCandidate3.jobPostId = jobPost5._id;
+        jobPostCandidate3.candidateId = candidate._id;
+        jobPostCandidate3.score = 78;
+        jobPostCandidate3.jobPost = jobPost5;
+        jobPostCandidate3.candidate = candidate;
+        await jobPostCandidateRepository.save(jobPostCandidate3);
+
+        console.log('Job Post Candidates seeded.');
 
         console.log('Seeding complete!');
     } catch (err) {

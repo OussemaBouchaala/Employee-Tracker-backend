@@ -17,7 +17,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "seed": "ts-node src/seed.ts"
+    "seed": "ts-node src/seed.ts",
+    "test:endpoints": "ts-node src/test-job-posts.ts"
   },
   "dependencies": {
     "@nestjs/axios": "^4.0.1",
@@ -33,6 +34,7 @@
     "mongodb": "^6.21.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "seed": "^0.4.4",
     "typeorm": "^0.3.28"
   },
   "devDependencies": {
