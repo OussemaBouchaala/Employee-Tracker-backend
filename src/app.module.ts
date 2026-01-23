@@ -10,9 +10,11 @@ import { JobPostModule } from './job-post/job-post.module';
 import { UserModule } from './user/user.module';
 import { NotificationService } from './notification/notification.service';
 import { NotificationController } from './notification/notification.controller';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
+    AuthModule,
     JobPostModule,
     UserModule,
     TypeOrmModule.forRoot({
