@@ -3,7 +3,6 @@ import { UserService } from '../user/user.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { RegisterCandidateDto } from './dto/register-candidate.dto';
 import { RegisterRecruiterDto } from './dto/register-recruiter.dto';
-import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
