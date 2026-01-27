@@ -7,7 +7,7 @@ export class Recruiter {
   @ObjectIdColumn()
   _id: ObjectId;
 
-  @Column(() => String)
+  @Column({ type: 'string' })
   userId: ObjectId;
 
   @Column()
