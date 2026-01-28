@@ -26,6 +26,12 @@ export class JobPost extends Timestamp {
     @Column()
     seniorityLevel: string;
 
+    @Column({ default: null })
+    approvalStatus: 'pending' | 'approved' | 'rejected' | null;
+
+    @Column({ nullable: true })
+    rejectionReason: string;
+
     @Column(() => String)
     recruiterId: ObjectId;
 

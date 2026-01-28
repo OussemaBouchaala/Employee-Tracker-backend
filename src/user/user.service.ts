@@ -19,11 +19,15 @@ export class UserService {
   ) {}
 
   findAllRecruiters(): Promise<Recruiter[]> {
-    return this.recruiterRepository.find();
+    return this.recruiterRepository.find({
+      relations: ['user'],
+    });
   }
 
   findAllCandidates(): Promise<Candidate[]> {
-    return this.candidateRepository.find();
+    return this.candidateRepository.find({
+      relations: ['user'],
+    });
   }
 
   testing_api():Observable<JSON> {

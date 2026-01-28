@@ -129,7 +129,7 @@ export class JobPostService {
 
     async remove(id: string): Promise<void> {
         const jobPost = await this.findOne(id);
-        await this.jobPostRepository.remove(jobPost);
+        await this.jobPostRepository.softRemove(jobPost);
     }
 
     async addCandidateToJobPost(jobPostId: string, candidateId: string, score: number): Promise<JobPostCandidate> {
@@ -202,3 +202,4 @@ export class JobPostService {
         });
     }
 }
+

@@ -13,6 +13,12 @@ export class Recruiter {
   @Column()
   companyName: string;
 
+  @Column({ default: 'pending' })
+  approvalStatus: 'pending' | 'approved' | 'rejected' | null;
+
+  @Column({ nullable: true })
+  rejectionReason: string;
+
   @OneToOne(() => User, (user) => user.recruiter)
   user: User;
 

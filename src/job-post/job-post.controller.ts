@@ -71,5 +71,4 @@ export class JobPostController {
     remove(@Param('id') id: string) {
         return this.jobPostService.remove(id);
     }
-   
 }
