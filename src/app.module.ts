@@ -10,9 +10,11 @@ import { UserModule } from './user/user.module';
 import { AdminModule } from './admin/admin.module';
 import { NotificationService } from './notification/notification.service';
 import { NotificationController } from './notification/notification.controller';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
+    AuthModule,
     JobPostModule,
     UserModule,
     AdminModule,
