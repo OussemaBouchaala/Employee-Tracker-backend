@@ -11,6 +11,7 @@ import { AdminModule } from './admin/admin.module';
 import { NotificationService } from './notification/notification.service';
 import { NotificationController } from './notification/notification.controller';
 import { AuthModule } from './auth/auth.module';
+import { dbConfig } from './config/db/database.config';
 
 @Module({
   imports: [
@@ -19,9 +20,13 @@ import { AuthModule } from './auth/auth.module';
     UserModule,
     AdminModule,
     TypeOrmModule.forRoot({
-      type: 'mongodb',
-      url: 'mongodb+srv://helmipaty_db_user:GEcR9fLDB40KPY8Z@cluster0.kfxxzgd.mongodb.net/projettp',
-      database: 'projettp',
+      type: dbConfig.type,
+      host: dbConfig.host,
+      port: dbConfig.port,
+      username: dbConfig.username,
+      password: dbConfig.password,
+      database: dbConfig.database,
+      ssl: true,
       synchronize: true,
       logging: true,
       autoLoadEntities: true,
