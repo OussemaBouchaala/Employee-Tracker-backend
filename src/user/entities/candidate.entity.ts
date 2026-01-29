@@ -1,14 +1,18 @@
-import { Column, Entity, ObjectIdColumn, ObjectId, OneToMany, OneToOne } from "typeorm";
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  OneToOne,
+  JoinColumn,
+} from "typeorm";
 import { JobPostCandidate } from "../../job-post/entities/jobPostCandidate.entity";
 import { User } from "./user.entity";
 
 @Entity()
 export class Candidate {
-  @ObjectIdColumn()
-  _id: ObjectId;
-
-  @Column({ type: 'string' })
-  userId: ObjectId;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
   cv: string;
@@ -16,9 +20,13 @@ export class Candidate {
   @Column()
   description: string;
 
-  @OneToOne(() => User, (user) => user.candidate)
+  @OneToOne(() => User, (user) => user.candidate, { onDelete: "CASCADE" })
+  @JoinColumn()
   user: User;
 
-  @OneToMany(() => JobPostCandidate, (jobPostCandidate) => jobPostCandidate.candidate)
+  @OneToMany(
+    () => JobPostCandidate,
+    (jobPostCandidate) => jobPostCandidate.candidate
+  )
   jobPostCandidates: JobPostCandidate[];
 }

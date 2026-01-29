@@ -1,14 +1,14 @@
-import { Column, Entity, ObjectIdColumn, ObjectId, OneToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn } from "typeorm";
 import { User } from "./user.entity";
 
 @Entity()
 export class Admin {
-  @ObjectIdColumn()
-  _id: ObjectId;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Column(() => String)
-  userId: ObjectId;
+ 
 
-  @OneToOne(() => User, (user) => user.admin)
+  @OneToOne(() => User, (user) => user.admin, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
   user: User;
 }

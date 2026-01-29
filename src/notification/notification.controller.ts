@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Sse } from '@nestjs/common';
+import { Body, Controller, Param, Post, Sse } from '@nestjs/common';
 
 import { NotificationService } from './notification.service';
 
@@ -15,7 +15,17 @@ export class NotificationController {
 
   @Post('emit-event')
   emitEvent(@Body("message") message: string) {
-    this.NotificationService.emit({ data: message } as MessageEvent);
+    this.NotificationService.emit(message);
+
+    return { message: message };
+  }
+  @Sse('get-stream/:candidateId')
+  getStream(@Param('candidateId') candidateId: string) {
+    return this.NotificationService.getStream(candidateId);
+  }
+  @Post('notify-candidate')
+  notifyCandidate(@Body("message") message: string,@Body("candidateId") candidateId: string) {
+    this.NotificationService.notifyCandidate(candidateId, message);
 
     return { message: message };
   }

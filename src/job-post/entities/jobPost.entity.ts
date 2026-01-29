@@ -1,43 +1,53 @@
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  ManyToOne,
+  JoinColumn,
+} from "typeorm";
 import { Timestamp } from "../../config/entities/timestamp.entity";
-import { Column, Entity, ObjectIdColumn, ObjectId, OneToMany, ManyToOne } from "typeorm";
 import { JobPostCandidate } from "./jobPostCandidate.entity";
 import { Recruiter } from "../../user/entities/recruiter.entity";
 
 @Entity()
 export class JobPost extends Timestamp {
-    @ObjectIdColumn()
-    _id: ObjectId;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    employmentType: string;
+  @Column()
+  employmentType: string;
 
-    @Column()
-    requirements: string;
+  @Column()
+  requirements: string;
 
-    @Column()
-    industries: string;
+  @Column()
+  industries: string;
 
-    @Column()
-    title: string;
+  @Column()
+  title: string;
 
-    @Column()
-    jobFunction: string;
+  @Column()
+  jobFunction: string;
 
-    @Column()
-    seniorityLevel: string;
+  @Column()
+  seniorityLevel: string;
 
-    @Column({ default: null })
-    approvalStatus: 'pending' | 'approved' | 'rejected' | null;
+  @Column({ default: null })
+  approvalStatus: 'pending' | 'approved' | 'rejected' | null;
 
-    @Column({ nullable: true })
-    rejectionReason: string;
+  @Column({ nullable: true })
+  rejectionReason: string;
 
-    @Column(() => String)
-    recruiterId: ObjectId;
-
-  @ManyToOne(() => Recruiter, (recruiter) => recruiter.jobPosts)
+  @ManyToOne(() => Recruiter, (recruiter) => recruiter.jobPosts, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn()
   recruiter: Recruiter;
 
-  @OneToMany(() => JobPostCandidate, (jobPostCandidate) => jobPostCandidate.jobPost)
+  @OneToMany(
+    () => JobPostCandidate,
+    (jobPostCandidate) => jobPostCandidate.jobPost
+  )
   jobPostCandidates: JobPostCandidate[];
 }
