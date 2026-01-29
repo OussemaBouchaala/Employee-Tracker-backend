@@ -52,7 +52,7 @@ export class JobPostController {
     @UseGuards(IsRecruiterOrAdminGuard)
     @Post()
     create(@Body() createJobPostDto: CreateJobPostDto, @Request() req) {
-        return this.jobPostService.create(createJobPostDto, req.user._id);
+        return this.jobPostService.create(createJobPostDto, req.user.userId);
     }
 
     @Get(':id')
@@ -71,5 +71,4 @@ export class JobPostController {
     remove(@Param('id') id: string) {
         return this.jobPostService.remove(id);
     }
-   
 }
