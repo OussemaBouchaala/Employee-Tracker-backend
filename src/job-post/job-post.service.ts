@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ObjectId } from 'mongodb';
 import { JobPost } from './entities/jobPost.entity';
 import { CreateJobPostDto } from './dto/create-job-post.dto';
 import { UpdateJobPostDto } from './dto/update-job-post.dto';
@@ -39,7 +38,7 @@ export class JobPostService {
 
   async findAndCreateCandidateMatches(jobPostId: string, amount: number): Promise<JobPostCandidate[]> {
     const jobPost = await this.jobPostRepository.findOne({ 
-        where: { _id: new ObjectId(jobPostId) } as any,
+        where: { id: Number(jobPostId) },
         relations: ['recruiter']
     });
     if (!jobPost) {
@@ -65,21 +64,20 @@ export class JobPostService {
 
     for (const candidateData of candidates) {
         const candidate = await this.candidateRepository.findOne({ 
-            where: { _id: new ObjectId(candidateData.candidateId || candidateData._id) } as any 
+            where: { id: Number(candidateData.candidateId || candidateData._id) }
         });
         
         if (candidate) {
             const existingMatch = await this.jobPostCandidateRepository.findOne({
                 where: { 
-                    jobPostId: jobPost._id,
-                    candidateId: candidate._id
-                } as any,
+                    jobPost: { id: jobPost.id },
+                    candidate: { id: candidate.id }
+                },
+                relations: ['jobPost', 'candidate']
             });
 
             if (!existingMatch) {
                 const jobPostCandidate = this.jobPostCandidateRepository.create({
-                    jobPostId: jobPost._id,
-                    candidateId: candidate._id,
                     score: candidateData.score || 0,
                     jobPost,
                     candidate,
@@ -93,13 +91,13 @@ export class JobPostService {
     return createdMatches;
   }
     async create(createJobPostDto: CreateJobPostDto, userId:string): Promise<JobPost> {
-        const recruiter = await this.recruiterRepository.findOne({ where: { userId: new ObjectId(userId) } as any });
+        const recruiter = await this.recruiterRepository.findOne({ where: { user: { id: Number(userId) } } });
         if (!recruiter) {
             throw new NotFoundException('Recruiter not found');
         }
         const jobPost = this.jobPostRepository.create({
             ...createJobPostDto,
-            recruiterId: recruiter._id,
+            recruiter,
         });
         return this.jobPostRepository.save(jobPost);
     }
@@ -112,7 +110,7 @@ export class JobPostService {
 
     async findOne(id: string): Promise<JobPost> {
         const jobPost = await this.jobPostRepository.findOne({ 
-            where: { _id: new ObjectId(id) } as any,
+            where: { id: Number(id) },
             relations: ['recruiter', 'recruiter.user', 'jobPostCandidates', 'jobPostCandidates.candidate', 'jobPostCandidates.candidate.user'],
         });
         if (!jobPost) {
@@ -133,21 +131,22 @@ export class JobPostService {
     }
 
     async addCandidateToJobPost(jobPostId: string, candidateId: string, score: number): Promise<JobPostCandidate> {
-        const jobPost = await this.jobPostRepository.findOne({ where: { _id: new ObjectId(jobPostId) } as any });
+        const jobPost = await this.jobPostRepository.findOne({ where: { id: Number(jobPostId) } });
         if (!jobPost) {
             throw new NotFoundException('Job Post not found');
         }
 
-        const candidate = await this.candidateRepository.findOne({ where: { _id: new ObjectId(candidateId) } as any });
+        const candidate = await this.candidateRepository.findOne({ where: { id: Number(candidateId) } });
         if (!candidate) {
             throw new NotFoundException('Candidate not found');
         }
 
         const existingMatch = await this.jobPostCandidateRepository.findOne({
             where: { 
-                jobPostId: new ObjectId(jobPostId),
-                candidateId: new ObjectId(candidateId)
-            } as any,
+                jobPost: { id: jobPost.id },
+                candidate: { id: candidate.id }
+            },
+            relations: ['jobPost', 'candidate']
         });
 
         if (existingMatch) {
@@ -155,8 +154,6 @@ export class JobPostService {
         }
 
         const jobPostCandidate = this.jobPostCandidateRepository.create({
-            jobPostId: jobPost._id,
-            candidateId: candidate._id,
             score,
             jobPost,
             candidate,
@@ -166,38 +163,15 @@ export class JobPostService {
     }
 
     async getCandidatesForJobPost(jobPostId: string): Promise<JobPostCandidate[]> {
-        // Use MongoDB native query to get all fields
-        const collection = this.jobPostCandidateRepository.manager.connection.getMongoRepository(JobPostCandidate);
-        const matches = await collection.find({
-            where: { jobPostId: new ObjectId(jobPostId) } as any,
+        return this.jobPostCandidateRepository.find({
+            where: { jobPost: { id: Number(jobPostId) } },
+            relations: ['jobPost', 'candidate', 'candidate.user'],
         });
-
-        // Manually load candidate relationships for MongoDB
-        const userRepository = this.candidateRepository.manager.getRepository('User');
-        
-        for (const match of matches) {
-            if (match.candidateId) {
-                const candidate = await this.candidateRepository.findOne({
-                    where: { _id: new ObjectId(match.candidateId) } as any,
-                });
-                if (candidate) {
-                    const user = await userRepository.findOne({
-                        where: { id:candidate.user.id },
-                    });
-                    if (user) {
-                        (candidate as any).user = user;
-                    }
-                    match.candidate = candidate;
-                }
-            }
-        }
-
-        return matches;
     }
 
     async getJobPostsForCandidate(candidateId: string): Promise<JobPostCandidate[]> {
         return this.jobPostCandidateRepository.find({
-            where: { candidateId: new ObjectId(candidateId) } as any,
+            where: { candidate: { id: Number(candidateId) } },
             relations: ['jobPost', 'jobPost.recruiter', 'jobPost.recruiter.user'],
         });
     }

@@ -6,7 +6,6 @@ import FormData from 'form-data';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Recruiter } from './entities/recruiter.entity';
 import { Repository } from 'typeorm';
-import { ObjectId } from 'mongodb';
 import { Candidate } from './entities/candidate.entity';
 import { User } from './entities/user.entity';
 import * as fs from 'fs';
@@ -80,9 +79,9 @@ export class UserService {
     const filePath = path.join(uploadDir, uniqueFilename);
     fs.writeFileSync(filePath, file.buffer);
 
-    // 3. Create and Save Candidate with file path
+    // 3. Create and Save Candidate with file path and relation to User
     const newCandidate = this.candidateRepository.create({
-      userId: new ObjectId(userId),
+      user: { id: Number(userId) } as unknown as User,
       description: createCandidateDto.description,
       cv: filePath,
     });
@@ -105,9 +104,8 @@ export class UserService {
     userId: string,
     createRecruiterDto: { companyName: string }
   ): Promise<Recruiter> {
-    console.log("Hello I am sekkus ", userId);
     const newRecruiter = this.recruiterRepository.create({
-      userId: new ObjectId(userId),
+      user: { id: Number(userId) } as unknown as User,
       companyName: createRecruiterDto.companyName,
     });
 

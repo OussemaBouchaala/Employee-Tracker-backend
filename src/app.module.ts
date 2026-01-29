@@ -20,7 +20,7 @@ import { dbConfig } from './config/db/database.config';
     UserModule,
     AdminModule,
     TypeOrmModule.forRoot({
-      type: dbConfig.type,
+      type: 'postgres',
       host: dbConfig.host,
       port: dbConfig.port,
       username: dbConfig.username,

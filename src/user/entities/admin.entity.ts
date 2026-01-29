@@ -6,8 +6,6 @@ export class Admin {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
- 
-
   @OneToOne(() => User, (user) => user.admin, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
   user: User;

@@ -21,10 +21,10 @@ export class User extends Timestamp {
   @Column({ unique: true })
   email: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   verifiedAt: Date | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   verificationToken: string | null;
 
   @Column()

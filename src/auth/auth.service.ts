@@ -68,7 +68,7 @@ export class AuthService {
     const newUser = await this.registerUser(registerCandidateDto);
 
     // Traiter les champs spécifiques au candidat
-    await this.userService.createCandidate(newUser._id.toString(), registerCandidateDto, file);
+    await this.userService.createCandidate(newUser.id.toString(), registerCandidateDto, file);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...result } = newUser;
@@ -82,7 +82,7 @@ export class AuthService {
     const newUser = await this.registerUser(registerRecruiterDto);
 
     // Traiter les champs spécifiques au recruteur (companyName)
-    await this.userService.createRecruiter(newUser._id.toString(), registerRecruiterDto);
+    await this.userService.createRecruiter(newUser.id.toString(), registerRecruiterDto);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...result } = newUser;
@@ -93,7 +93,7 @@ export class AuthService {
     if (!user.verifiedAt) {
       throw new ConflictException('Email not verified');
     }
-    const payload = { id: user._id, role: user.role };
+    const payload = { id: user.id, role: user.role };
     return {
       access_token: this.jwtService.sign(payload),
     };

@@ -4,8 +4,8 @@ import { AuthController } from './auth.controller';
 import { UserModule } from '../user/user.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { LocalStrategy } from './stratigies/local.strategy';
-import { JwtStrategy } from './stratigies/jwt.strategy';
+import { LocalStrategy } from './strategies/local.strategy';
+import { JwtStrategy } from './strategies/jwt.strategy';
 import { JWT_SECRET } from './authConfig/jwt-secret';
 import { MailModule } from '../mail/mail.module';
 

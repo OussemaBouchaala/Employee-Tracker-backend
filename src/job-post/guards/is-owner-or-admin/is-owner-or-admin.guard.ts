@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { JobPostService } from '../../job-post.service';
 import { UserRole } from 'src/config/user/userRole';
 import { Recruiter } from 'src/user/entities/recruiter.entity';
-import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class IsOwnerOrAdminGuard implements CanActivate {
@@ -34,12 +33,13 @@ export class IsOwnerOrAdminGuard implements CanActivate {
       throw new NotFoundException('Job Post not found');
     }
 
-    // Find the recruiter by userId to get their _id
+    // Find the recruiter by user relation
     const recruiter = await this.recruiterRepository.findOne({
-      where: { userId: new ObjectId(user.userId) } as any
+      where: { user: { id: Number(user.userId) } },
+      relations: ['user'],
     });
 
-    if (recruiter && jobPost.recruiterId.toString() === recruiter.id.toString()) {
+    if (recruiter && jobPost.recruiter && jobPost.recruiter.id === recruiter.id) {
       return true;
     }
 

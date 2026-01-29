@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ObjectId } from 'mongodb';
 import { Recruiter } from '../user/entities/recruiter.entity';
 import { Candidate } from '../user/entities/candidate.entity';
 
@@ -16,7 +15,7 @@ export class AdminService {
 
   async approveRecruiter(recruiterId: string): Promise<Recruiter> {
     const recruiter = await this.recruiterRepository.findOne({
-      where: { _id: new ObjectId(recruiterId) } as any,
+      where: { id: Number(recruiterId) },
       relations: ['user'],
     });
     if (!recruiter) {
@@ -29,7 +28,7 @@ export class AdminService {
 
   async rejectRecruiter(recruiterId: string, reason?: string): Promise<Recruiter> {
     const recruiter = await this.recruiterRepository.findOne({
-      where: { _id: new ObjectId(recruiterId) } as any,
+      where: { id: Number(recruiterId) },
       relations: ['user'],
     });
     if (!recruiter) {
@@ -63,7 +62,7 @@ export class AdminService {
 
   async deleteRecruiter(recruiterId: string): Promise<{ message: string }> {
     const recruiter = await this.recruiterRepository.findOne({
-      where: { _id: new ObjectId(recruiterId) } as any,
+      where: { id: Number(recruiterId) },
     });
     if (!recruiter) {
       throw new NotFoundException('Recruiter not found');
@@ -74,7 +73,7 @@ export class AdminService {
 
   async deleteCandidate(candidateId: string): Promise<{ message: string }> {
     const candidate = await this.candidateRepository.findOne({
-      where: { _id: new ObjectId(candidateId) } as any,
+      where: { id: Number(candidateId) },
     });
     if (!candidate) {
       throw new NotFoundException('Candidate not found');

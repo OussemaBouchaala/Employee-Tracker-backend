@@ -18,7 +18,7 @@ export class Recruiter {
   companyName: string;
 
   @Column({ default: 'pending' })
-  approvalStatus: 'pending' | 'approved' | 'rejected' | null;
+  approvalStatus: 'pending' | 'approved' | 'rejected';
 
   @Column({ nullable: true })
   rejectionReason: string;
