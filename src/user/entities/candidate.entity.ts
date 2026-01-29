@@ -11,16 +11,8 @@ import { User } from "./user.entity";
 
 @Entity()
 export class Candidate {
-<<<<<<< HEAD
   @PrimaryGeneratedColumn()
   id: number;
-=======
-  @ObjectIdColumn()
-  _id: ObjectId;
-
-  @Column({ type: 'string' })
-  userId: ObjectId;
->>>>>>> b3da62f15fef423774970bb4662712549650f9b1
 
   @Column()
   cv: string;
