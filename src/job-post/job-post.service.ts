@@ -29,12 +29,12 @@ export class JobPostService {
   
 
  testing_api():Observable<JSON> {
-    return this.httpService.get(API_URL.testingAPIURL).pipe(map(res => res.data));
+    return this.httpService.get(API_URL.testingAPIURL).pipe(map(res => res.data))as Observable<JSON>;
   
     
   }
    find_candidates(jobPost:CreateJobPostDto,amount:number):Observable<JSON> {
-    return this.httpService.post(API_URL.getCandidatesURL, {'jobpost': jobPost, 'amount': amount }).pipe(map(res => res.data));;
+    return this.httpService.post(API_URL.getCandidatesURL, {'jobpost': jobPost, 'amount': amount }).pipe(map(res => res.data)) as Observable<JSON>;
   }
 
   async findAndCreateCandidateMatches(jobPostId: string, amount: number): Promise<JobPostCandidate[]> {
@@ -182,7 +182,7 @@ export class JobPostService {
                 });
                 if (candidate) {
                     const user = await userRepository.findOne({
-                        where: { _id: new ObjectId(candidate.userId) } as any,
+                        where: { id:candidate.user.id },
                     });
                     if (user) {
                         (candidate as any).user = user;

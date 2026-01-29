@@ -1,19 +1,24 @@
-import { Column, Entity, ObjectIdColumn, ObjectId, OneToOne, OneToMany } from "typeorm";
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  OneToOne,
+  OneToMany,
+  JoinColumn,
+} from "typeorm";
 import { User } from "./user.entity";
 import { JobPost } from "../../job-post/entities/jobPost.entity";
 
 @Entity()
 export class Recruiter {
-  @ObjectIdColumn()
-  _id: ObjectId;
-
-  @Column(() => String)
-  userId: ObjectId;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
   companyName: string;
 
-  @OneToOne(() => User, (user) => user.recruiter)
+  @OneToOne(() => User, (user) => user.recruiter, { onDelete: "CASCADE" })
+  @JoinColumn()
   user: User;
 
   @OneToMany(() => JobPost, (jobPost) => jobPost.recruiter)

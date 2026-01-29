@@ -17,14 +17,19 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
     JobPostModule,
     UserModule,
-    TypeOrmModule.forRoot({
-      type: 'mongodb',
-      url: 'mongodb+srv://helmipaty_db_user:GEcR9fLDB40KPY8Z@cluster0.kfxxzgd.mongodb.net/projettp',
-      database: 'projettp',
-      synchronize: true,
-      logging: true,
-      autoLoadEntities: true,
-    }),
+   TypeOrmModule.forRoot({
+  type: 'postgres',
+  host: 'ep-misty-sound-ahhpx1he-pooler.c-3.us-east-1.aws.neon.tech',
+  port: 5432,
+  username: 'neondb_owner',
+  password: 'npg_SFEQ2gWsZU1u',
+  database: 'neondb',
+  ssl: {
+    rejectUnauthorized: false,
+  },
+  synchronize: true,
+  logging: true,
+  autoLoadEntities: true,})
   ],
   controllers: [AppController, NotificationController],
   providers: [AppService, NotificationService],

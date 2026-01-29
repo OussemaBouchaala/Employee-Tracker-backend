@@ -39,7 +39,7 @@ export class IsOwnerOrAdminGuard implements CanActivate {
       where: { userId: new ObjectId(user.userId) } as any
     });
 
-    if (recruiter && jobPost.recruiterId.toString() === recruiter._id.toString()) {
+    if (recruiter && jobPost.recruiterId.toString() === recruiter.id.toString()) {
       return true;
     }
 

@@ -11,7 +11,7 @@ import { UserRole } from './config/user/userRole';
 
 const AppDataSource = new DataSource({
     type: 'mongodb',
-    url: 'mongodb+srv://helmipaty_db_user:GEcR9fLDB40KPY8Z@cluster0.kfxxzgd.mongodb.net/projettp',
+    url: 'mongodb+srv://helmipatydbuser:GEcR9fLDB40KPY8Z@cluster0.kfxxzgd.mongodb.net/projettp',
     database: 'projettp',
     synchronize: true,
     logging: true,
@@ -42,7 +42,7 @@ async function seed() {
         await userRepository.save(adminUser);
 
         const admin = new Admin();
-        admin.userId = adminUser._id;
+        admin.userId = adminUser.id;
         admin.user = adminUser;
         await adminRepository.save(admin);
         console.log('Admin seeded.');
@@ -59,7 +59,7 @@ async function seed() {
         await userRepository.save(recruiterUser);
 
         const recruiter = new Recruiter();
-        recruiter.userId = recruiterUser._id;
+        recruiter.user.id = recruiterUser.id;
         recruiter.companyName = 'Tech Corp';
         recruiter.user = recruiterUser;
         await recruiterRepository.save(recruiter);
@@ -77,7 +77,7 @@ async function seed() {
         await userRepository.save(recruiterUser2);
 
         const recruiter2 = new Recruiter();
-        recruiter2.userId = recruiterUser2._id;
+        recruiter2.user.id = recruiterUser2.id;
         recruiter2.companyName = 'Innovation Labs';
         recruiter2.user = recruiterUser2;
         await recruiterRepository.save(recruiter2);
@@ -95,7 +95,7 @@ async function seed() {
         await userRepository.save(candidateUser);
 
         const candidate = new Candidate();
-        candidate.userId = candidateUser._id;
+        candidate.user.id = candidateUser.id;
         candidate.cv = 'http://example.com/cv.pdf';
         candidate.description = 'Experienced developer looking for a job.';
         candidate.user = candidateUser;
@@ -113,7 +113,7 @@ async function seed() {
         jobPost1.industries = 'Technology, Software Development';
         jobPost1.jobFunction = 'Software Engineering';
         jobPost1.seniorityLevel = 'Senior';
-        jobPost1.recruiterId = recruiter._id;
+        jobPost1.recruiter.id = recruiter.id;
         jobPost1.recruiter = recruiter;
         await jobPostRepository.save(jobPost1);
 
@@ -125,7 +125,7 @@ async function seed() {
         jobPost2.industries = 'Technology, Cloud Computing';
         jobPost2.jobFunction = 'DevOps';
         jobPost2.seniorityLevel = 'Mid-Senior';
-        jobPost2.recruiterId = recruiter._id;
+        jobPost2.recruiter.id = recruiter.id;
         jobPost2.recruiter = recruiter;
         await jobPostRepository.save(jobPost2);
 
@@ -137,7 +137,7 @@ async function seed() {
         jobPost3.industries = 'Technology, UI/UX';
         jobPost3.jobFunction = 'Frontend Engineering';
         jobPost3.seniorityLevel = 'Mid-Senior';
-        jobPost3.recruiterId = recruiter2._id;
+        jobPost3.recruiter.id = recruiter2.id;
         jobPost3.recruiter = recruiter2;
         await jobPostRepository.save(jobPost3);
 
@@ -149,7 +149,7 @@ async function seed() {
         jobPost4.industries = 'Technology, AI/ML, Data Analytics';
         jobPost4.jobFunction = 'Data Science';
         jobPost4.seniorityLevel = 'Senior';
-        jobPost4.recruiterId = recruiter2._id;
+        jobPost4.recruiter.id = recruiter2.id;
         jobPost4.recruiter = recruiter2;
         await jobPostRepository.save(jobPost4);
 
@@ -161,7 +161,7 @@ async function seed() {
         jobPost5.industries = 'Technology, Product Management';
         jobPost5.jobFunction = 'Product Management';
         jobPost5.seniorityLevel = 'Senior';
-        jobPost5.recruiterId = recruiter._id;
+        jobPost5.recruiter.id = recruiter.id;
         jobPost5.recruiter = recruiter;
         await jobPostRepository.save(jobPost5);
 
@@ -171,24 +171,24 @@ async function seed() {
         console.log('Seeding Job Post Candidates...');
 
         const jobPostCandidate1 = new JobPostCandidate();
-        jobPostCandidate1.jobPostId = jobPost1._id;
-        jobPostCandidate1.candidateId = candidate._id;
+        jobPostCandidate1.jobPost.id = jobPost1.id;
+        jobPostCandidate1.candidate.id = candidate.id;
         jobPostCandidate1.score = 85;
         jobPostCandidate1.jobPost = jobPost1;
         jobPostCandidate1.candidate = candidate;
         await jobPostCandidateRepository.save(jobPostCandidate1);
 
         const jobPostCandidate2 = new JobPostCandidate();
-        jobPostCandidate2.jobPostId = jobPost3._id;
-        jobPostCandidate2.candidateId = candidate._id;
+        jobPostCandidate2.jobPost.id = jobPost3.id;
+        jobPostCandidate2.candidate.id = candidate.id;
         jobPostCandidate2.score = 92;
         jobPostCandidate2.jobPost = jobPost3;
         jobPostCandidate2.candidate = candidate;
         await jobPostCandidateRepository.save(jobPostCandidate2);
 
         const jobPostCandidate3 = new JobPostCandidate();
-        jobPostCandidate3.jobPostId = jobPost5._id;
-        jobPostCandidate3.candidateId = candidate._id;
+        jobPostCandidate3.jobPost.id = jobPost5.id;
+        jobPostCandidate3.candidate.id = candidate.id;
         jobPostCandidate3.score = 78;
         jobPostCandidate3.jobPost = jobPost5;
         jobPostCandidate3.candidate = candidate;
