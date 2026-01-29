@@ -21,6 +21,12 @@ export class User extends Timestamp {
   @Column({ unique: true })
   email: string;
 
+  @Column({ nullable: true })
+  verifiedAt: Date | null;
+
+  @Column({ nullable: true })
+  verificationToken: string | null;
+
   @Column()
   password: string;
 

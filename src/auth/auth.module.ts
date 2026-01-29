@@ -4,12 +4,14 @@ import { AuthController } from './auth.controller';
 import { UserModule } from '../user/user.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { LocalStrategy } from './local.strategy';
-import { JwtStrategy } from './jwt.strategy';
+import { LocalStrategy } from './stratigies/local.strategy';
+import { JwtStrategy } from './stratigies/jwt.strategy';
 import { JWT_SECRET } from './authConfig/jwt-secret';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
   imports: [
+    MailModule,
     UserModule,
     PassportModule,
     JwtModule.register({
@@ -20,4 +22,4 @@ import { JWT_SECRET } from './authConfig/jwt-secret';
   providers: [AuthService, LocalStrategy, JwtStrategy],
   controllers: [AuthController],
 })
-export class AuthModule {}
+export class AuthModule { }
