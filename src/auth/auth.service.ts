@@ -60,15 +60,34 @@ export class AuthService {
   /**
    * Inscription d'un candidat avec CV et description
    */
-  async registerCandidate(registerCandidateDto: RegisterCandidateDto, file: Express.Multer.File) {
-    if (!file) {
+  /**
+   * Inscription d'un candidat avec CV et description
+   */
+  async registerCandidate(registerCandidateDto: RegisterCandidateDto, files: { cv: Express.Multer.File[], image: Express.Multer.File[] }) {
+    if (!files || !files.cv || !files.cv[0]) {
       throw new ConflictException('CV file is required for candidates');
+    }
+
+    const cvFile = files.cv[0];
+    const imageFile = files.image ? files.image[0] : null;
+
+    // Check if user exists before saving any files
+    const existingUser = await this.userService.findOne(registerCandidateDto.email);
+    if (existingUser) {
+      throw new ConflictException('User with this email already exists');
+    }
+
+    if (imageFile) {
+      // Delegate to a helper or do it here. 
+      // We need a path. 
+      const profilePicturePath = this.userService.saveProfilePictureSafely(imageFile);
+      registerCandidateDto.profilePictureUrl = profilePicturePath;
     }
 
     const newUser = await this.registerUser(registerCandidateDto);
 
     // Traiter les champs spécifiques au candidat
-    await this.userService.createCandidate(newUser._id.toString(), registerCandidateDto, file);
+    await this.userService.createCandidate(newUser._id.toString(), registerCandidateDto, cvFile);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...result } = newUser;
@@ -89,7 +108,7 @@ export class AuthService {
     return result;
   }
 
-  async login(user: any ) {
+  async login(user: any) {
     if (!user.verifiedAt) {
       throw new ConflictException('Email not verified');
     }

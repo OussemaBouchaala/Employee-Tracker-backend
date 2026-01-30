@@ -1,23 +1,28 @@
-import { Controller, Request, Post, UseGuards, Get, Body, UseInterceptors, UploadedFile, Query } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { Controller, Request, Post, UseGuards, Get, Body, UseInterceptors, UploadedFile, UploadedFiles, Query, UnauthorizedException } from '@nestjs/common';
 import type { Express } from 'express';
-import { PassportLocalGuard } from './guards/local-auth.guard';
+
 import { AuthService } from './auth.service';
 import { RegisterCandidateDto } from './dto/register-candidate.dto';
 import { RegisterRecruiterDto } from './dto/register-recruiter.dto';
+import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) { }
 
   @Post('register-candidate')
-  @UseInterceptors(FileInterceptor('cv'))
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'cv', maxCount: 1 },
+    { name: 'image', maxCount: 1 },
+  ]))
   async registerCandidate(
     @Body() registerCandidateDto: RegisterCandidateDto,
-    @UploadedFile() file: Express.Multer.File
+    @UploadedFiles() files: { cv: Express.Multer.File[], image: Express.Multer.File[] }
   ) {
-    return this.authService.registerCandidate(registerCandidateDto, file);
+    return this.authService.registerCandidate(registerCandidateDto, files);
   }
 
   @Post('register-recruiter')
@@ -25,10 +30,14 @@ export class AuthController {
     return this.authService.registerRecruiter(registerRecruiterDto);
   }
 
-  @UseGuards(PassportLocalGuard)
+
   @Post('login')
-  async login(@Request() req) {
-    return this.authService.login(req.user);
+  async login(@Body() loginDto: LoginDto) {
+    const user = await this.authService.validateUser(loginDto.email, loginDto.password);
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+    return this.authService.login(user);
   }
 
   @Get('verify')

@@ -58,13 +58,33 @@ export class UserService {
       .pipe(map(res => res.data));
   }
 
+  saveProfilePictureSafely(file: Express.Multer.File): string | undefined {
+    if (!file) return undefined;
+
+    // 1. Create the profile-pictures folder if it doesn't exist
+    const uploadDir = path.join(process.cwd(), 'profile-pictures');
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+
+    // 2. Generate unique filename and save the file
+    // We don't have userId yet if this is called before user creation, so use timestamp + random
+    const uniqueFilename = `profile_${Date.now()}_${Math.round(Math.random() * 1E9)}_${file.originalname}`;
+    const filePath = path.join(uploadDir, uniqueFilename);
+    fs.writeFileSync(filePath, file.buffer);
+
+    return filePath;
+  }
+
+
   async createCandidate(
     userId: string,
     createCandidateDto: { description: string; cv: string },
     file: Express.Multer.File
   ): Promise<Candidate> {
 
-    const embeddingObservable = this.embed_CV(file, userId);
+    const embeddingObservable = await lastValueFrom(this.embed_CV(file, userId));
+    console.log(embeddingObservable);
     // 1. Create the candidateCV folder if it doesn't exist
     const uploadDir = path.join(process.cwd(), 'candidateCV');
     if (!fs.existsSync(uploadDir)) {
@@ -101,7 +121,6 @@ export class UserService {
     userId: string,
     createRecruiterDto: { companyName: string }
   ): Promise<Recruiter> {
-    console.log("Hello I am sekkus ", userId);
     const newRecruiter = this.recruiterRepository.create({
       userId: new ObjectId(userId),
       companyName: createRecruiterDto.companyName,
