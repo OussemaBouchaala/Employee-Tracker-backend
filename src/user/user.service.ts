@@ -8,6 +8,7 @@ import { Recruiter } from './entities/recruiter.entity';
 import { Repository } from 'typeorm';
 import { ObjectId } from 'mongodb';
 import { Candidate } from './entities/candidate.entity';
+import { Admin } from './entities/admin.entity';
 import { User } from './entities/user.entity';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -20,6 +21,8 @@ export class UserService {
     private recruiterRepository: Repository<Recruiter>,
     @InjectRepository(Candidate)
     private candidateRepository: Repository<Candidate>,
+    @InjectRepository(Admin)
+    private adminRepository: Repository<Admin>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) { }
@@ -219,6 +222,27 @@ export class UserService {
     }
 
     return this.findFullProfile(userId);
+  }
+
+  async findAllUsers(): Promise<User[]> {
+    return this.userRepository.find();
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    const user = await this.userRepository.findOne({ where: { _id: new ObjectId(id) } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.role === 'candidate') {
+      await this.candidateRepository.delete({ userId: new ObjectId(id) });
+    } else if (user.role === 'recruiter') {
+      await this.recruiterRepository.delete({ userId: new ObjectId(id) });
+    } else if (user.role === 'admin') {
+      await this.adminRepository.delete({ userId: new ObjectId(id) });
+    }
+
+    await this.userRepository.delete({ _id: new ObjectId(id) });
   }
 }
 

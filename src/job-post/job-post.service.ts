@@ -42,7 +42,7 @@ export class JobPostService {
     }
 
     async findAndCreateCandidateMatches(jobPostId: string, amount: number): Promise<JobPostCandidate[]> {
-      
+
         const jobPost = await this.jobPostRepository.findOne({
             where: { _id: new ObjectId(jobPostId) },
             relations: ['recruiter']
@@ -50,7 +50,7 @@ export class JobPostService {
         if (!jobPost) {
             throw new NotFoundException('Job Post not found');
         }
-        
+
 
         const createJobPostDto: CreateJobPostDto = {
             title: jobPost.title,
@@ -92,16 +92,16 @@ export class JobPostService {
                         candidateId: candidate._id
                     },
                 });
-              
+
                 if (!existingMatch) {
                     console.log(jobPost._id.toString());
                     console.log(candidate._id.toString());
-                    
-                    
-                    const jobPostCandidate =await this.jobPostCandidateRepository.create({
-                        
+
+
+                    const jobPostCandidate = await this.jobPostCandidateRepository.create({
+
                         jobPostId: new ObjectId(jobPost._id.toString()),
-                        
+
                         candidateId: new ObjectId(candidate._id.toString()),
                         score: candidateData.similarity || 0,
                         jobPost,
@@ -127,10 +127,35 @@ export class JobPostService {
         return this.jobPostRepository.save(jobPost);
     }
 
-    findAll(): Promise<JobPost[]> {
-        return this.jobPostRepository.find({
-            relations: ['recruiter', 'recruiter.user', 'jobPostCandidates'],
-        });
+    async findAll(): Promise<JobPost[]> {
+        const jobPosts = await this.jobPostRepository.find();
+
+        // Manually populate recruiter and user data for each job post
+        for (const jobPost of jobPosts) {
+            if (jobPost.recruiterId) {
+                const recruiter = await this.recruiterRepository.findOne({
+                    where: { _id: new ObjectId(jobPost.recruiterId) }
+                });
+
+                if (recruiter) {
+                    // Fetch the user associated with the recruiter
+                    if (recruiter.userId) {
+                        const user = await this.userRepository.findOne({
+                            where: { _id: new ObjectId(recruiter.userId) }
+                        });
+
+                        if (user) {
+                            // Remove password from user object
+                            const { password, ...safeUser } = user;
+                            (recruiter as any).user = safeUser;
+                        }
+                    }
+                    jobPost.recruiter = recruiter;
+                }
+            }
+        }
+
+        return jobPosts;
     }
 
     async findOne(id: string): Promise<JobPost> {
