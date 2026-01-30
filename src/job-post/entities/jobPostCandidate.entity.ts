@@ -8,10 +8,10 @@ export class JobPostCandidate extends Timestamp {
   @ObjectIdColumn()
   _id: ObjectId;
 
-  @Column(() => String)
+  @Column('objectId')
   jobPostId: ObjectId;
 
-  @Column(() => String)
+  @Column('objectId')
   candidateId: ObjectId;
 
   @Column()

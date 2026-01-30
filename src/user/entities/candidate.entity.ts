@@ -1,6 +1,7 @@
 import { Column, Entity, ObjectIdColumn, ObjectId, OneToMany, OneToOne } from "typeorm";
 import { JobPostCandidate } from "../../job-post/entities/jobPostCandidate.entity";
 import { User } from "./user.entity";
+import { Notification } from "../../notification/entities/notification.entity";
 
 @Entity()
 export class Candidate {
@@ -21,4 +22,7 @@ export class Candidate {
 
   @OneToMany(() => JobPostCandidate, (jobPostCandidate) => jobPostCandidate.candidate)
   jobPostCandidates: JobPostCandidate[];
+
+  @OneToMany(() => Notification, (notification) => notification.recipient)
+  notifications: Notification[];
 }

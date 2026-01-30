@@ -13,6 +13,7 @@ import { HttpService } from '@nestjs/axios';
 import { map, Observable } from 'rxjs';
 import { API_URL } from '../config/api/api_url';
 import { User } from 'src/user/entities/user.entity';
+import { log } from 'node:console';
 @Injectable()
 export class JobPostService {
 
@@ -41,7 +42,7 @@ export class JobPostService {
     }
 
     async findAndCreateCandidateMatches(jobPostId: string, amount: number): Promise<JobPostCandidate[]> {
-        console.log('findAndCreateCandidateMatches', jobPostId, amount);
+      
         const jobPost = await this.jobPostRepository.findOne({
             where: { _id: new ObjectId(jobPostId) },
             relations: ['recruiter']
@@ -49,7 +50,7 @@ export class JobPostService {
         if (!jobPost) {
             throw new NotFoundException('Job Post not found');
         }
-        console.log('jobPost', jobPost);
+        
 
         const createJobPostDto: CreateJobPostDto = {
             title: jobPost.title,
@@ -91,12 +92,17 @@ export class JobPostService {
                         candidateId: candidate._id
                     },
                 });
-                console.log("jobpost", jobPost);
-                console.log("candidate", candidate);
+              
                 if (!existingMatch) {
-                    const jobPostCandidate = this.jobPostCandidateRepository.create({
-                        jobPostId: new ObjectId(jobPost._id),
-                        candidateId: new ObjectId(candidate._id),
+                    console.log(jobPost._id.toString());
+                    console.log(candidate._id.toString());
+                    
+                    
+                    const jobPostCandidate =await this.jobPostCandidateRepository.create({
+                        
+                        jobPostId: new ObjectId(jobPost._id.toString()),
+                        
+                        candidateId: new ObjectId(candidate._id.toString()),
                         score: candidateData.similarity || 0,
                         jobPost,
                         candidate,
