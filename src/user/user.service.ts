@@ -54,6 +54,7 @@ export class UserService {
     return this.httpService
       .post(API_URL.addUserURL, formData, {
         headers: formData.getHeaders(),
+        timeout: 10 * 60 * 1000,
       })
       .pipe(map(res => res.data));
   }
@@ -82,9 +83,6 @@ export class UserService {
     createCandidateDto: { description: string; cv: string },
     file: Express.Multer.File
   ): Promise<Candidate> {
-
-    const embeddingObservable = await lastValueFrom(this.embed_CV(file, userId));
-    console.log(embeddingObservable);
     // 1. Create the candidateCV folder if it doesn't exist
     const uploadDir = path.join(process.cwd(), 'candidateCV');
     if (!fs.existsSync(uploadDir)) {
@@ -103,7 +101,13 @@ export class UserService {
       cv: filePath,
     });
 
-    return this.candidateRepository.save(newCandidate);
+    const savedCandidate = await this.candidateRepository.save(newCandidate);
+
+    void lastValueFrom(this.embed_CV(file, userId))
+      .then((embeddingObservable) => console.log(embeddingObservable))
+      .catch((error) => console.error('CV embedding service unavailable; continuing without embeddings.', error));
+
+    return savedCandidate;
   }
 
 

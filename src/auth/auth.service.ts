@@ -52,7 +52,11 @@ export class AuthService {
       verifiedAt: null,
     });
 
-    await this.mailService.sendVerificationEmail(newUser.email, verificationToken);
+    try {
+      await this.mailService.sendVerificationEmail(newUser.email, verificationToken);
+    } catch (error) {
+      console.error('Failed to send verification email', error);
+    }
 
     return newUser;
   }
