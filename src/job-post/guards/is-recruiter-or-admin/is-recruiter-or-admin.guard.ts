@@ -9,15 +9,22 @@ export class IsRecruiterOrAdminGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    console.log(user)
+
+    console.log('IsRecruiterOrAdminGuard - User:', user ? { id: user._id, role: user.role, email: user.email } : 'Undefined');
+
     if (!user) {
+      console.log('IsRecruiterOrAdminGuard - No user found on request');
       return false;
     }
-    console.log(user.role,UserRole.RECRUITER)
-    if (user.role === UserRole.ADMIN || user.role === UserRole.RECRUITER) {
+
+    const userRole = user.role?.toString().toLowerCase();
+    console.log(`IsRecruiterOrAdminGuard - Checking role: '${userRole}' against '${UserRole.ADMIN}' and '${UserRole.RECRUITER}'`);
+
+    if (userRole === UserRole.ADMIN || userRole === UserRole.RECRUITER || userRole === 'recruiter' || userRole === 'admin') {
       return true;
     }
 
+    console.log('IsRecruiterOrAdminGuard - Access denied');
     throw new ForbiddenException('Only Recruiters or Admins can create job posts');
   }
 }

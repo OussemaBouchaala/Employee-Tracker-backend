@@ -37,9 +37,9 @@ export class User extends Timestamp {
   @OneToOne(() => Admin, (admin) => admin.user)
   admin: Admin;
 
-  @OneToOne(() => Recruiter, (recruiter) => recruiter.user)
+  @OneToOne(() => Recruiter, (recruiter) => recruiter.user, { eager: true })
   recruiter: Recruiter;
 
-  @OneToOne(() => Candidate, (candidate) => candidate.user)
+  @OneToOne(() => Candidate, (candidate) => candidate.user, { eager: true })
   candidate: Candidate;
 }

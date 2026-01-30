@@ -7,7 +7,7 @@ import { Candidate } from "../../user/entities/candidate.entity";
 export class JobPostCandidate extends Timestamp {
   @ObjectIdColumn()
   _id: ObjectId;
-  
+
   @Column(() => String)
   jobPostId: ObjectId;
 

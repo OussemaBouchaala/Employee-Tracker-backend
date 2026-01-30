@@ -4,6 +4,7 @@ import { CreateJobPostDto } from './dto/create-job-post.dto';
 import { UpdateJobPostDto } from './dto/update-job-post.dto';
 import { IsRecruiterOrAdminGuard } from './guards/is-recruiter-or-admin/is-recruiter-or-admin.guard';
 import { IsOwnerOrAdminGuard } from './guards/is-owner-or-admin/is-owner-or-admin.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 
 @Controller('job-posts')
@@ -17,15 +18,15 @@ export class JobPostController {
 
     @Get('testing-api')
     testing_api() {
-       
+
         return this.jobPostService.testing_api();
     }
     @Post('getCandidates')
-    getcandidates(@Body('jobpost') jobpost:CreateJobPostDto,@Body('amount') amount:number) {
-        return this.jobPostService.find_candidates(jobpost,amount);
+    getcandidates(@Body('jobpost') jobpost: CreateJobPostDto, @Body('amount') amount: number) {
+        return this.jobPostService.find_candidates(jobpost, amount);
     }
 
-    @UseGuards(IsRecruiterOrAdminGuard)
+    @UseGuards(JwtAuthGuard, IsRecruiterOrAdminGuard)
     @Post(':id/find-and-match-candidates')
     async findAndMatchCandidates(
         @Param('id') jobPostId: string,
@@ -34,7 +35,7 @@ export class JobPostController {
         return this.jobPostService.findAndCreateCandidateMatches(jobPostId, amount);
     }
 
-    @UseGuards(IsRecruiterOrAdminGuard)
+    @UseGuards(JwtAuthGuard, IsRecruiterOrAdminGuard)
     @Post(':id/add-candidate')
     async addCandidateToJobPost(
         @Param('id') jobPostId: string,
@@ -49,7 +50,7 @@ export class JobPostController {
         return this.jobPostService.getCandidatesForJobPost(jobPostId);
     }
 
-    @UseGuards(IsRecruiterOrAdminGuard)
+    @UseGuards(JwtAuthGuard, IsRecruiterOrAdminGuard)
     @Post()
     create(@Body() createJobPostDto: CreateJobPostDto, @Request() req) {
         return this.jobPostService.create(createJobPostDto, req.user._id);
@@ -60,16 +61,16 @@ export class JobPostController {
         return this.jobPostService.findOne(id);
     }
 
-    @UseGuards(IsOwnerOrAdminGuard)
+    @UseGuards(JwtAuthGuard, IsOwnerOrAdminGuard)
     @Patch(':id')
     update(@Param('id') id: string, @Body() updateJobPostDto: UpdateJobPostDto) {
         return this.jobPostService.update(id, updateJobPostDto);
     }
 
-    @UseGuards(IsOwnerOrAdminGuard)
+    @UseGuards(JwtAuthGuard, IsOwnerOrAdminGuard)
     @Delete(':id')
     remove(@Param('id') id: string) {
         return this.jobPostService.remove(id);
     }
-   
+
 }
