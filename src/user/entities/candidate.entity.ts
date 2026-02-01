@@ -1,28 +1,21 @@
 import {
   Column,
-  Entity,
-  PrimaryGeneratedColumn,
+  ChildEntity, // Changed from Entity
   OneToMany,
-  OneToOne,
-  JoinColumn,
 } from "typeorm";
 import { JobPostCandidate } from "../../job-post/entities/jobPostCandidate.entity";
 import { User } from "./user.entity";
+import { UserRole } from "../../config/user/userRole";
 
-@Entity()
-export class Candidate {
-  @PrimaryGeneratedColumn()
-  id: number;
+@ChildEntity(UserRole.CANDIDATE) // This links it to the 'role' column in User
+export class Candidate extends User { // Now extends User
+  // No @PrimaryGeneratedColumn() here. It shares User's ID.
 
   @Column()
   cv: string;
 
   @Column()
   description: string;
-
-  @OneToOne(() => User, (user) => user.candidate, { onDelete: "CASCADE" })
-  @JoinColumn()
-  user: User;
 
   @OneToMany(
     () => JobPostCandidate,

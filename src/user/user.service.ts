@@ -1,4 +1,4 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
 import { API_URL } from '../config/api/api_url';
 import { HttpService } from '@nestjs/axios';
 import { Observable, map, lastValueFrom } from 'rxjs';
@@ -23,16 +23,14 @@ export class UserService {
     private userRepository: Repository<User>,
   ) { }
 
+  // 1. CLEANER QUERIES: No need for relations: ['user'] anymore!
+  // The data is automatically joined by inheritance.
   findAllRecruiters(): Promise<Recruiter[]> {
-    return this.recruiterRepository.find({
-      relations: ['user'],
-    });
+    return this.recruiterRepository.find();
   }
 
   findAllCandidates(): Promise<Candidate[]> {
-    return this.candidateRepository.find({
-      relations: ['user'],
-    });
+    return this.candidateRepository.find();
   }
 
   async findOne(email: string): Promise<User | null> {
@@ -44,6 +42,57 @@ export class UserService {
     return this.userRepository.save(newUser);
   }
 
+  // 2. UPDATED CANDIDATE CREATION
+  async createCandidate(
+    userId: string,
+    createCandidateDto: { description: string },
+    cvFile: Express.Multer.File,
+  ): Promise<Candidate> {
+    // A. Find the base user record
+    const user = await this.userRepository.findOneBy({ id: Number(userId) });
+    if (!user) throw new NotFoundException('User not found');
+
+    // B. CV File handling
+    // const uploadDir = path.join(process.cwd(), 'candidateCV');
+    // if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+
+    // const uniqueCvFilename = `${userId}_${Date.now()}_cv_${cvFile.originalname}`;
+    // const cvFilePath = path.join(uploadDir, uniqueCvFilename);
+    // const cvFilePathRelative = path.relative(process.cwd(), cvFilePath);
+    // console.log("cv", {cvFile,cvFileBuffer:typeof(cvFile.buffer),cvFilePathRelative});
+    // fs.writeFileSync(cvFilePath, cvFile.buffer);
+    const cvFilePathRelative = await this.savefile(cvFile,'candidateCV');
+
+    // D. CONVERSION LOGIC
+    // In Joined Inheritance, to "convert" a User to a Candidate, we save a 
+    // Candidate entity using the SAME ID as the User.
+    const newCandidate = this.candidateRepository.create({
+      ...user, // This copies name, email, password, and the CRITICAL ID
+      description: createCandidateDto.description,
+      cv: cvFilePathRelative,
+    });
+
+    return this.candidateRepository.save(newCandidate);
+  }
+
+  // 3. UPDATED RECRUITER CREATION
+  async createRecruiter(
+    userId: string,
+    createRecruiterDto: { companyName: string },
+  ): Promise<Recruiter> {
+    const user = await this.userRepository.findOneBy({ id: Number(userId) });
+    if (!user) throw new NotFoundException('User not found');
+
+    const newRecruiter = this.recruiterRepository.create({
+      ...user, // Copies existing user data including ID
+      companyName: createRecruiterDto.companyName,
+      approvalStatus: 'pending',
+    });
+
+    return this.recruiterRepository.save(newRecruiter);
+  }
+
+  //Other helpers
   testing_api(): Observable<JSON> {
     return this.httpService.get(API_URL.testingAPIURL).pipe(map(res => res.data));
   }
@@ -61,35 +110,18 @@ export class UserService {
       .pipe(map(res => res.data));
   }
 
-  async createCandidate(
-    userId: string,
-    createCandidateDto: { description: string; cv: string },
-    file: Express.Multer.File
-  ): Promise<Candidate> {
+  async savefile(file: Express.Multer.File, folderName: string): Promise<string> {
+    const uploadDir = path.join(process.cwd(), folderName);
+    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
-    const embeddingObservable = this.embed_CV(file, userId);
-    // 1. Create the candidateCV folder if it doesn't exist
-    const uploadDir = path.join(process.cwd(), 'candidateCV');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-
-    // 2. Generate unique filename and save the file
-    const uniqueFilename = `${userId}_${Date.now()}_${file.originalname}`;
+    const uniqueFilename = `${Date.now()}_${file.originalname}`;
     const filePath = path.join(uploadDir, uniqueFilename);
+    const filePathRelative = path.relative(process.cwd(), filePath);
+    console.log("file", {file,fileBuffer:typeof(file.buffer),filePathRelative});
     fs.writeFileSync(filePath, file.buffer);
 
-    // 3. Create and Save Candidate with file path and relation to User
-    const newCandidate = this.candidateRepository.create({
-      user: { id: Number(userId) } as unknown as User,
-      description: createCandidateDto.description,
-      cv: filePath,
-    });
-
-    return this.candidateRepository.save(newCandidate);
+    return filePathRelative;
   }
-
-
   async verifyUser(token: string): Promise<User> {
     const user = await this.userRepository.findOne({ where: { verificationToken: token } });
     if (!user) {
@@ -100,15 +132,4 @@ export class UserService {
     return this.userRepository.save(user);
   }
 
-  async createRecruiter(
-    userId: string,
-    createRecruiterDto: { companyName: string }
-  ): Promise<Recruiter> {
-    const newRecruiter = this.recruiterRepository.create({
-      user: { id: Number(userId) } as unknown as User,
-      companyName: createRecruiterDto.companyName,
-    });
-
-    return this.recruiterRepository.save(newRecruiter);
-  }
 }

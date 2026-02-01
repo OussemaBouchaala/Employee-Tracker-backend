@@ -1,0 +1,9 @@
+﻿src/job-post/guards/is-owner-or-admin/is-owner-or-admin.guard.ts(38,16): error TS2353: Object literal may only specify known properties, and 'user' does not exist in type 'FindOptionsWhere<Recruiter> | FindOptionsWhere<Recruiter>[]'.
+src/job-post/job-post.service.ts(94,77): error TS2353: Object literal may only specify known properties, and 'user' does not exist in type 'FindOptionsWhere<Recruiter> | FindOptionsWhere<Recruiter>[]'.
+src/seed.ts(50,15): error TS2339: Property 'user' does not exist on type 'Admin'.
+src/seed.ts(67,19): error TS2339: Property 'user' does not exist on type 'Recruiter'.
+src/seed.ts(84,20): error TS2339: Property 'user' does not exist on type 'Recruiter'.
+src/seed.ts(102,19): error TS2339: Property 'user' does not exist on type 'Candidate'.
+src/user/user.service.ts(90,44): error TS2339: Property 'id' does not exist on type 'Candidate[]'.
+src/user/user.service.ts(97,5): error TS2740: Type 'Candidate[]' is missing the following properties from type 'Candidate': cv, description, jobPostCandidates, id, and 11 more.
+src/user/user.service.ts(120,5): error TS2740: Type 'Recruiter[]' is missing the following properties from type 'Recruiter': companyName, approvalStatus, rejectionReason, jobPosts, and 12 more.

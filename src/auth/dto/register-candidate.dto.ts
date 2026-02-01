@@ -6,7 +6,4 @@ export class RegisterCandidateDto extends RegisterUserDto {
     @IsNotEmpty()
     @IsString()
     description: string;
-
-    @IsOptional()
-    cv: string;
 }

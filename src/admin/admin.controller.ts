@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Delete, Param } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { ApproveRecruiterDto } from '../job-post/dto/approve-recruiter.dto';
 import { RejectRecruiterDto } from '../job-post/dto/reject-recruiter.dto';
@@ -6,7 +6,7 @@ import { IsAdminGuard } from '../job-post/guards/is-admin/is-admin.guard';
 import { Recruiter } from '../user/entities/recruiter.entity';
 
 @Controller('admin')
-@UseGuards(IsAdminGuard)
+//@UseGuards(IsAdminGuard)
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
@@ -40,14 +40,14 @@ export class AdminController {
   }
 
   // Delete Recruiter
-  @Post('delete-recruiter/:id')
-  async deleteRecruiter(@Body('recruiterId') recruiterId: string): Promise<{ message: string }> {
+  @Delete('delete-recruiter/:id')
+  async deleteRecruiter(@Param('id') recruiterId: string): Promise<{ message: string }> {
     return this.adminService.deleteRecruiter(recruiterId);
   }
 
   // Delete Candidate
-  @Post('delete-candidate/:id')
-  async deleteCandidate(@Body('candidateId') candidateId: string): Promise<{ message: string }> {
+  @Delete('delete-candidate/:id')
+  async deleteCandidate(@Param('id') candidateId: string): Promise<{ message: string }> {
     return this.adminService.deleteCandidate(candidateId);
   }
 }

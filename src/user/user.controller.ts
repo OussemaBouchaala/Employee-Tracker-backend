@@ -13,13 +13,13 @@ export class UserController {
       return this.userService.testing_api();
   }
 
-  @UseGuards(IsAdminGuard)
+  //@UseGuards(IsAdminGuard)
   @Get('recruiters')
   getRecruiters() {
     return this.userService.findAllRecruiters();
   }
 
-  @UseGuards(IsAdminGuard)
+  //@UseGuards(IsAdminGuard)
   @Get('candidates')
   getCandidates() {
     return this.userService.findAllCandidates();

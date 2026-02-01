@@ -4,13 +4,13 @@ import {
   Column,
   Entity,
   PrimaryGeneratedColumn,
-  OneToOne,
+  TableInheritance, // Added this
 } from "typeorm";
-import { Admin } from "./admin.entity";
-import { Recruiter } from "./recruiter.entity";
-import { Candidate } from "./candidate.entity";
 
 @Entity()
+// This tells TypeORM that other entities will 'join' this table
+// The 'role' column will act as the "discriminator" to know which child type it is
+@TableInheritance({ column: { type: "varchar", name: "role" } })
 export class User extends Timestamp {
   @PrimaryGeneratedColumn()
   id: number;
@@ -33,8 +33,9 @@ export class User extends Timestamp {
   @Column({ nullable: true })
   profilePictureUrl: string;
 
-  @Column({ nullable: true })
-  phoneNumber: number;
+  // src/user/entities/user.entity.ts
+  @Column({ type: 'varchar', nullable: true }) // use varchar in Postgres
+  phoneNumber: string;
 
   @Column({
     type: "enum",
@@ -42,12 +43,6 @@ export class User extends Timestamp {
   })
   role: UserRole;
 
-  @OneToOne(() => Admin, (admin) => admin.user)
-  admin: Admin;
-
-  @OneToOne(() => Recruiter, (recruiter) => recruiter.user)
-  recruiter: Recruiter;
-
-  @OneToOne(() => Candidate, (candidate) => candidate.user)
-  candidate: Candidate;
+  // Note: We REMOVE the @OneToOne relations to Admin, Recruiter, and Candidate here.
+  // In inheritance, a User doesn't "have" a Candidate; a Candidate "is" a User.
 }

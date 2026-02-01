@@ -2,9 +2,6 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
-
-
 import { JobPostModule } from './job-post/job-post.module';
 import { UserModule } from './user/user.module';
 import { AdminModule } from './admin/admin.module';
@@ -28,7 +25,7 @@ import { dbConfig } from './config/db/database.config';
       database: dbConfig.database,
       ssl: true,
       synchronize: true,
-      logging: true,
+      logging: false,
       autoLoadEntities: true,
     }),
   ],

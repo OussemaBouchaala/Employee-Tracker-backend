@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength, IsEnum, IsOptional, IsNumber } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, MinLength, IsEnum, IsOptional } from 'class-validator';
 import { UserRole } from '../../config/user/userRole';
 
 export class RegisterUserDto {
@@ -21,9 +21,5 @@ export class RegisterUserDto {
 
   @IsOptional()
   @IsString()
-  profilePictureUrl?: string;
-
-  @IsOptional()
-  @IsNumber()
-  phoneNumber?: number;
+  phoneNumber?: string;
 }

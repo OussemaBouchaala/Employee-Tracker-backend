@@ -10,8 +10,8 @@ export class MailService {
             host: "sandbox.smtp.mailtrap.io",
             port: 2525,
             auth: {
-                user: "571a4018b71ea6",
-                pass: "f9023b0747e5ab"
+                user: "05695a5af54c6f",
+                pass: "baeb9136b13e21"
             }
         });
     }

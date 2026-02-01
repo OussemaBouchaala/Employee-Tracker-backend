@@ -29,12 +29,49 @@ export class AuthService {
   /**
    * Méthode générale pour créer un utilisateur de base
    */
-  private async registerUser(registerUserDto: RegisterUserDto) {
-    const { name, email, password, role, phoneNumber, profilePictureUrl } = registerUserDto;
+  // private async registerUser(registerUserDto: RegisterUserDto, profilePicFile?: Express.Multer.File) {
+  //   const { name, email, password, role, phoneNumber} = registerUserDto;
+
+  //   const existingUser = await this.userService.findOne(email);
+  //   if (existingUser) {
+  //     throw new ConflictException('User with this email already exists');
+  //   }
+
+  //   const saltOrRounds = 10;
+  //   const hashedPassword = await bcrypt.hash(password, saltOrRounds);
+  //   const verificationToken = uuidv4();
+
+  //   // The 'role' property is crucial here as it acts as the 
+  //   // discriminator for your Table Inheritance.
+  //   const newUser = await this.userService.create({
+  //     name,
+  //     email,
+  //     password: hashedPassword,
+  //     role, // This MUST match the UserRole enum
+  //     phoneNumber,
+  //     profilePictureUrl: profilePictureUrl ?? `https://i.pravatar.cc/150?u=${email}`,
+  //     verificationToken,
+  //     verifiedAt: null,
+  //   });
+
+  //   await this.mailService.sendVerificationEmail(newUser.email, verificationToken);
+
+  //   return newUser;
+  // }
+
+  private async registerUser(registerUserDto: RegisterUserDto, profilePicFile?: Express.Multer.File) {
+    const { name, email, password, role, phoneNumber } = registerUserDto;
 
     const existingUser = await this.userService.findOne(email);
     if (existingUser) {
       throw new ConflictException('User with this email already exists');
+    }
+
+    // 1. Handle Profile Picture Saving if it exists
+    let finalProfilePicUrl = `https://i.pravatar.cc/150?u=${email}`;
+    if (profilePicFile) {
+      // We'll assume you create this method in UserService to save to a 'uploads/profiles' folder
+      finalProfilePicUrl = await this.userService.savefile(profilePicFile,'profilePictures');
     }
 
     const saltOrRounds = 10;
@@ -47,30 +84,30 @@ export class AuthService {
       password: hashedPassword,
       role,
       phoneNumber,
-      profilePictureUrl: profilePictureUrl ?? `https://i.pravatar.cc/150?u=${email}`,
+      profilePictureUrl: finalProfilePicUrl,
       verificationToken,
       verifiedAt: null,
     });
 
     await this.mailService.sendVerificationEmail(newUser.email, verificationToken);
-
     return newUser;
   }
 
   /**
    * Inscription d'un candidat avec CV et description
    */
-  async registerCandidate(registerCandidateDto: RegisterCandidateDto, file: Express.Multer.File) {
-    if (!file) {
+  // registerCandidate and registerRecruiter remain largely the same,
+  // but they now benefit from the fact that the IDs are synced.
+  async registerCandidate(registerCandidateDto: RegisterCandidateDto, cvFile: Express.Multer.File, profilePicFile?: Express.Multer.File) {
+    if (!cvFile) {
       throw new ConflictException('CV file is required for candidates');
     }
 
-    const newUser = await this.registerUser(registerCandidateDto);
+    const newUser = await this.registerUser(registerCandidateDto, profilePicFile);
 
-    // Traiter les champs spécifiques au candidat
-    await this.userService.createCandidate(newUser.id.toString(), registerCandidateDto, file);
+    // This calls the improved UserService method we wrote in the previous step
+    await this.userService.createCandidate(newUser.id.toString(), registerCandidateDto, cvFile);
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...result } = newUser;
     return result;
   }
@@ -78,8 +115,8 @@ export class AuthService {
   /**
    * Inscription d'un recruteur avec le nom de l'entreprise
    */
-  async registerRecruiter(registerRecruiterDto: RegisterRecruiterDto) {
-    const newUser = await this.registerUser(registerRecruiterDto);
+  async registerRecruiter(registerRecruiterDto: RegisterRecruiterDto, profilePicFile?: Express.Multer.File) {
+    const newUser = await this.registerUser(registerRecruiterDto, profilePicFile);
 
     // Traiter les champs spécifiques au recruteur (companyName)
     await this.userService.createRecruiter(newUser.id.toString(), registerRecruiterDto);
@@ -102,4 +139,6 @@ export class AuthService {
   async verifyEmail(token: string) {
     return this.userService.verifyUser(token);
   }
+
+
 }
