@@ -1,11 +1,12 @@
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { Controller, Request, Post, UseGuards, Get, Body, UseInterceptors, UploadedFile, UploadedFiles, Query, UnauthorizedException } from '@nestjs/common';
 import type { Express } from 'express';
+import { PassportLocalGuard } from './guards/local-auth.guard';
 
 import { AuthService } from './auth.service';
 import { RegisterCandidateDto } from './dto/register-candidate.dto';
 import { RegisterRecruiterDto } from './dto/register-recruiter.dto';
-import { LoginDto } from './dto/login.dto';
+
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 
@@ -30,14 +31,10 @@ export class AuthController {
     return this.authService.registerRecruiter(registerRecruiterDto);
   }
 
-
+  @UseGuards(PassportLocalGuard)
   @Post('login')
-  async login(@Body() loginDto: LoginDto) {
-    const user = await this.authService.validateUser(loginDto.email, loginDto.password);
-    if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-    return this.authService.login(user);
+  async login(@Request() req) {
+    return this.authService.login(req.user);
   }
 
   @Get('verify')
