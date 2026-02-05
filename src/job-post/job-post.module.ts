@@ -9,8 +9,11 @@ import { JobPostController } from './job-post.controller';
 import { IsRecruiterOrAdminGuard } from './guards/is-recruiter-or-admin/is-recruiter-or-admin.guard';
 import { IsOwnerOrAdminGuard } from './guards/is-owner-or-admin/is-owner-or-admin.guard';
 import { HttpModule } from '@nestjs/axios';
+import { AuthModule } from '../auth/auth.module';
+import { User } from 'src/user/entities/user.entity';
+import { NotificationModule } from '../notification/notification.module';
 @Module({
-    imports: [HttpModule,TypeOrmModule.forFeature([JobPost, JobPostCandidate, Recruiter, Candidate])],
+    imports: [HttpModule, AuthModule, NotificationModule, TypeOrmModule.forFeature([JobPost, JobPostCandidate, Recruiter, Candidate, User])],
     controllers: [JobPostController],
     providers: [JobPostService, IsRecruiterOrAdminGuard, IsOwnerOrAdminGuard],
     exports: [JobPostService],

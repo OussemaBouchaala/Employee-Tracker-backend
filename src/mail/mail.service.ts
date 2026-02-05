@@ -10,14 +10,15 @@ export class MailService {
             host: "sandbox.smtp.mailtrap.io",
             port: 2525,
             auth: {
-                user: "571a4018b71ea6",
-                pass: "f9023b0747e5ab"
+                user: "e6aa075c2bc50e",
+                pass: "9d25ae67bd637e"
             }
         });
     }
 
     async sendVerificationEmail(email: string, token: string) {
-        const url = `http://localhost:3000/auth/verify?token=${token}`;
+        // Link to Angular frontend, which will then call the backend to verify
+        const url = `http://localhost:4200/verify-email?token=${token}`;
 
         await this.transporter.sendMail({
             from: '"Employee Tracker" <no-reply@employeetracker.com>',

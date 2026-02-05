@@ -52,7 +52,11 @@ export class AuthService {
       verifiedAt: null,
     });
 
-    await this.mailService.sendVerificationEmail(newUser.email, verificationToken);
+    try {
+      await this.mailService.sendVerificationEmail(newUser.email, verificationToken);
+    } catch (error) {
+      console.error('Failed to send verification email', error);
+    }
 
     return newUser;
   }
@@ -120,5 +124,13 @@ export class AuthService {
 
   async verifyEmail(token: string) {
     return this.userService.verifyUser(token);
+  }
+
+  async updateProfile(userId: string, updateData: { name?: string; phoneNumber?: number; description?: string; companyName?: string }) {
+    return this.userService.updateFullProfile(userId, updateData);
+  }
+
+  async getProfile(userId: string) {
+    return this.userService.findFullProfile(userId);
   }
 }

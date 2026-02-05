@@ -5,29 +5,29 @@ import { Recruiter } from "../../user/entities/recruiter.entity";
 
 @Entity()
 export class JobPost extends Timestamp {
-    @ObjectIdColumn()
-    _id: ObjectId;
+  @ObjectIdColumn()
+  _id: ObjectId;
 
-    @Column()
-    employmentType: string;
+  @Column()
+  employmentType: string;
 
-    @Column()
-    requirements: string;
+  @Column()
+  requirements: string;
 
-    @Column()
-    industries: string;
+  @Column()
+  industries: string;
 
-    @Column()
-    title: string;
+  @Column()
+  title: string;
 
-    @Column()
-    jobFunction: string;
+  @Column()
+  jobFunction: string;
 
-    @Column()
-    seniorityLevel: string;
+  @Column()
+  seniorityLevel: string;
 
-    @Column(() => String)
-    recruiterId: ObjectId;
+  @Column(() => String)
+  recruiterId: ObjectId;
 
   @ManyToOne(() => Recruiter, (recruiter) => recruiter.jobPosts)
   recruiter: Recruiter;

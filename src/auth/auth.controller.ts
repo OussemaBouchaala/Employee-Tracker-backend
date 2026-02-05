@@ -1,5 +1,5 @@
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { Controller, Request, Post, UseGuards, Get, Body, UseInterceptors, UploadedFile, UploadedFiles, Query, UnauthorizedException } from '@nestjs/common';
+import { Controller, Request, Post, UseGuards, Get, Body, UseInterceptors, UploadedFile, UploadedFiles, Query, UnauthorizedException, Patch } from '@nestjs/common';
 import type { Express } from 'express';
 import { PassportLocalGuard } from './guards/local-auth.guard';
 
@@ -46,8 +46,14 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
-    console.log(req.user);
     return req.user;
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('profile')
+  async updateProfile(@Request() req, @Body() updateData: { name?: string; phoneNumber?: number; description?: string; companyName?: string }) {
+    return this.authService.updateProfile(req.user._id.toString(), updateData);
+  }
 }
+
 
