@@ -14,13 +14,15 @@ import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express
 import type { Express } from 'express';
 import { PassportLocalGuard } from './guards/local-auth.guard';
 import { AuthService } from './auth.service';
+
 import { RegisterCandidateDto } from './dto/register-candidate.dto';
 import { RegisterRecruiterDto } from './dto/register-recruiter.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { UserService } from 'src/user/user.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private userService: UserService) { }
 
   // @Post('register-candidate')
   // @UseInterceptors(FileInterceptor('cv'))
@@ -75,8 +77,11 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
-    console.log(req.user);
-    return req.user;
+    const currentUser = this.userService.findUserById(req.user.userId);
+    console.log(currentUser);
+    return currentUser;
   }
+
+  
 }
 

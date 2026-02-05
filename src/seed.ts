@@ -7,6 +7,7 @@ import { JobPost } from "./job-post/entities/jobPost.entity";
 import { JobPostCandidate } from "./job-post/entities/jobPostCandidate.entity";
 import { UserRole } from './config/user/userRole';
 import { dbConfig } from './config/db/database.config';
+import { ApprovalStatus } from "./config/user/recruiterStatus";
 
 const AppDataSource = new DataSource({
     type: 'postgres',
@@ -52,7 +53,7 @@ async function seed() {
         recruiter1.role = UserRole.RECRUITER;
         recruiter1.phoneNumber = '21454862';
         recruiter1.companyName = 'Tech Corp';
-        recruiter1.approvalStatus = 'approved';
+        recruiter1.approvalStatus = ApprovalStatus.APPROVED;
         const savedRecruiter1 = await recruiterRepository.save(recruiter1);
 
         // --- Seed Recruiter 2 ---
@@ -64,7 +65,7 @@ async function seed() {
         recruiter2.role = UserRole.RECRUITER;
         recruiter2.phoneNumber = '55245654';
         recruiter2.companyName = 'Innovation Labs';
-        recruiter2.approvalStatus = 'approved';
+        recruiter2.approvalStatus = ApprovalStatus.APPROVED;
         const savedRecruiter2 = await recruiterRepository.save(recruiter2);
 
         // --- Seed Candidate ---

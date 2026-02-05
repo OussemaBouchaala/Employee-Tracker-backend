@@ -5,11 +5,16 @@ import { Observable, map, lastValueFrom } from 'rxjs';
 import FormData from 'form-data';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Recruiter } from './entities/recruiter.entity';
-import { Repository } from 'typeorm';
+import { In, Or, Repository } from 'typeorm';
 import { Candidate } from './entities/candidate.entity';
 import { User } from './entities/user.entity';
 import * as fs from 'fs';
 import * as path from 'path';
+import { ApprovalStatus } from 'src/config/user/recruiterStatus';
+import { UserRole } from 'src/config/user/userRole';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateCandidateDto } from './dto/update-candidate.dto';                                                                                                                                                        
+import { UpdateRecruiterDto } from './dto/update-recruiter.dto';
 
 @Injectable()
 export class UserService {
@@ -23,21 +28,95 @@ export class UserService {
     private userRepository: Repository<User>,
   ) { }
 
-  // 1. CLEANER QUERIES: No need for relations: ['user'] anymore!
-  // The data is automatically joined by inheritance.
-  findAllRecruiters(): Promise<Recruiter[]> {
-    return this.recruiterRepository.find();
+  // 1. User CRUD operations
+  async findAllUsers(): Promise<User[]> {
+    const users = await this.userRepository.find({
+        where: {
+          role: In([UserRole.CANDIDATE, UserRole.RECRUITER])
+        }
+      }
+    );
+    console.log("users", users);
+    return users;
   }
 
-  findAllCandidates(): Promise<Candidate[]> {
-    return this.candidateRepository.find();
+  async deleteUser(userId: string): Promise<{ message: string }> {
+    const user = await this.userRepository.findOneBy({ id: Number(userId) });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    await this.userRepository.softRemove(user);
+    return { message: 'User deleted successfully' };
   }
 
-  async findOne(email: string): Promise<User | null> {
+  async updateUser(
+    userId: string, 
+    updateData: UpdateCandidateDto | UpdateRecruiterDto,
+    profilePicture?: Express.Multer.File,
+    cv?: Express.Multer.File
+  ): Promise<User> {
+    const user = await this.userRepository.preload({ id: Number(userId), ...updateData });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    if(profilePicture){
+      if(user.profilePictureUrl){
+        this.deletefile(user.profilePictureUrl);
+      }
+      user.profilePictureUrl = await this.savefile(profilePicture,'profilePictures');
+    }
+    let updatedUser= await this.userRepository.save(user);
+    if(user.role === UserRole.CANDIDATE){
+      updatedUser = await this.updateCandidate(userId, updateData as UpdateCandidateDto,cv);
+    }
+    if(user.role === UserRole.RECRUITER){
+      updatedUser = await this.updateRecruiter(userId, updateData as UpdateRecruiterDto);
+    }
+    
+    return updatedUser;    
+  }
+
+  async updateCandidate(
+    userId: string, 
+    updateData: UpdateCandidateDto,
+    cvFile?: Express.Multer.File
+  ): Promise<Candidate> {
+    const candidate = await this.candidateRepository.preload({ id: Number(userId), ...updateData });
+    if (!candidate) {
+      throw new NotFoundException('Candidate not found');
+    }
+    if(cvFile){
+      if(candidate.cv){
+        this.deletefile(candidate.cv);
+      }
+      candidate.cv = await this.savefile(cvFile,'candidateCV');
+    }
+    return this.candidateRepository.save(candidate);
+  }
+
+  async updateRecruiter(userId: string, updateData: UpdateRecruiterDto): Promise<Recruiter> {
+    const recruiter = await this.recruiterRepository.preload({ id: Number(userId), ...updateData });
+    console.log("recruiter", recruiter);
+    console.log("updateData", updateData);
+    if (!recruiter) {
+      throw new NotFoundException('Recruiter not found');
+    }
+    if(updateData.companyName){
+      console.log("companyName", updateData.companyName);
+    }
+    console.log("recruiter", recruiter);
+    return this.recruiterRepository.save(recruiter);
+  }
+
+  findOne(email: string): Promise<User | null> {
     return this.userRepository.findOne({ where: { email } });
   }
 
-  async create(userData: Partial<User>): Promise<User> {
+  findUserById(id: number): Promise<User | null> {
+    return this.userRepository.findOne({ where: { id } });
+  }
+
+  create(userData: Partial<User>): Promise<User> {
     const newUser = this.userRepository.create(userData);
     return this.userRepository.save(newUser);
   }
@@ -86,7 +165,7 @@ export class UserService {
     const newRecruiter = this.recruiterRepository.create({
       ...user, // Copies existing user data including ID
       companyName: createRecruiterDto.companyName,
-      approvalStatus: 'pending',
+      approvalStatus: ApprovalStatus.PENDING,
     });
 
     return this.recruiterRepository.save(newRecruiter);
@@ -122,6 +201,12 @@ export class UserService {
 
     return filePathRelative;
   }
+
+  async deletefile(filePath: string): Promise<void> {
+    const oldFile = path.join(process.cwd(), filePath);
+    if (fs.existsSync(oldFile)) fs.unlinkSync(oldFile);
+  }
+
   async verifyUser(token: string): Promise<User> {
     const user = await this.userRepository.findOne({ where: { verificationToken: token } });
     if (!user) {

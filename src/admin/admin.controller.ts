@@ -10,37 +10,9 @@ import { Recruiter } from '../user/entities/recruiter.entity';
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
-  // Recruiter Approval Endpoints
-  @Post('approve-recruiter')
-  async approveRecruiter(@Body() approveRecruiterDto: ApproveRecruiterDto): Promise<Recruiter> {
-    return this.adminService.approveRecruiter(approveRecruiterDto.recruiterId);
-  }
-
-  @Post('reject-recruiter')
-  async rejectRecruiter(@Body() rejectRecruiterDto: RejectRecruiterDto): Promise<Recruiter> {
-    return this.adminService.rejectRecruiter(rejectRecruiterDto.recruiterId, rejectRecruiterDto.reason);
-  }
-
-  // Get Pending Recruiters
-  @Get('pending-recruiters')
-  async getPendingRecruiters(): Promise<Recruiter[]> {
-    return this.adminService.getPendingRecruiters();
-  }
-
-  // Get Approved Recruiters
-  @Get('approved-recruiters')
-  async getApprovedRecruiters(): Promise<Recruiter[]> {
-    return this.adminService.getApprovedRecruiters();
-  }
-
-  // Get Rejected Recruiters
-  @Get('rejected-recruiters')
-  async getRejectedRecruiters(): Promise<Recruiter[]> {
-    return this.adminService.getRejectedRecruiters();
-  }
 
   // Delete Recruiter
-  @Delete('delete-recruiter/:id')
+  @Delete(':id')
   async deleteRecruiter(@Param('id') recruiterId: string): Promise<{ message: string }> {
     return this.adminService.deleteRecruiter(recruiterId);
   }
@@ -50,4 +22,33 @@ export class AdminController {
   async deleteCandidate(@Param('id') candidateId: string): Promise<{ message: string }> {
     return this.adminService.deleteCandidate(candidateId);
   }
+
+  // // Recruiter Approval Endpoints
+  // @Post('approve-recruiter')
+  // async approveRecruiter(@Body() approveRecruiterDto: ApproveRecruiterDto): Promise<Recruiter> {
+  //   return this.adminService.approveRecruiter(approveRecruiterDto.recruiterId);
+  // }
+
+  // @Post('reject-recruiter')
+  // async rejectRecruiter(@Body() rejectRecruiterDto: RejectRecruiterDto): Promise<Recruiter> {
+  //   return this.adminService.rejectRecruiter(rejectRecruiterDto.recruiterId, rejectRecruiterDto.reason);
+  // }
+
+  // // Get Pending Recruiters
+  // @Get('pending-recruiters')
+  // async getPendingRecruiters(): Promise<Recruiter[]> {
+  //   return this.adminService.getPendingRecruiters();
+  // }
+
+  // // Get Approved Recruiters
+  // @Get('approved-recruiters')
+  // async getApprovedRecruiters(): Promise<Recruiter[]> {
+  //   return this.adminService.getApprovedRecruiters();
+  // }
+
+  // // Get Rejected Recruiters
+  // @Get('rejected-recruiters')
+  // async getRejectedRecruiters(): Promise<Recruiter[]> {
+  //   return this.adminService.getRejectedRecruiters();
+  // }
 }

@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 import { JobPostModule } from './job-post/job-post.module';
 import { UserModule } from './user/user.module';
 import { AdminModule } from './admin/admin.module';
@@ -9,6 +11,7 @@ import { NotificationService } from './notification/notification.service';
 import { NotificationController } from './notification/notification.controller';
 import { AuthModule } from './auth/auth.module';
 import { dbConfig } from './config/db/database.config';
+
 
 @Module({
   imports: [
@@ -27,6 +30,14 @@ import { dbConfig } from './config/db/database.config';
       synchronize: true,
       logging: false,
       autoLoadEntities: true,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'profilePictures'),
+      serveRoot: '/profilePictures',
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'candidateCV'),
+      serveRoot: '/candidateCV',
     }),
   ],
   controllers: [AppController, NotificationController],
