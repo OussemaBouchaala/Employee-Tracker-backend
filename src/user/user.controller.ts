@@ -14,6 +14,10 @@ export class UserController {
       return this.userService.testing_api();
   }
 
+  @Get("recruiters")
+  findAllRecruiters() {
+    return this.userService.findAllRecruiters();
+  }
   // User CRUD endpoints
 
   @Get('all')
@@ -34,10 +38,10 @@ export class UserController {
   updateUser(
     @Param('id') userId: string, 
     @Body() updateData: UpdateUserDto, 
-    @UploadedFiles() files: {cv: Express.Multer.File[], profilePicture?: Express.Multer.File[]}, 
+    @UploadedFiles() files?: {cv: Express.Multer.File[], profilePicture: Express.Multer.File[]}, 
   ){
-    const cvFile = files.cv?.[0];
-    const profilePic = files.profilePicture?.[0];
+    const cvFile = files?.cv?.[0];
+    const profilePic = files?.profilePicture?.[0];
     console.log("cvFile", cvFile);
     console.log("profilePic", profilePic);
     return this.userService.updateUser(userId, updateData, cvFile, profilePic);
@@ -56,8 +60,4 @@ export class UserController {
   ) {
     return this.userService.embed_CV(cv, userId);
   }
-
-
-
- 
 }

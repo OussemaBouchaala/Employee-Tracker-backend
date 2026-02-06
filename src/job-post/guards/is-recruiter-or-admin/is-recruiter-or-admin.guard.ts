@@ -6,7 +6,8 @@ export class IsRecruiterOrAdminGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-
+    console.log("user", user);
+    console.log("request", request);
     // 1. Basic check if user exists (populated by JWT Strategy)
     if (!user || !user.role) {
       throw new ForbiddenException('Authentication required');

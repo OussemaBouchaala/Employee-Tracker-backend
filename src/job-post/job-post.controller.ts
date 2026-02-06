@@ -4,16 +4,20 @@ import { CreateJobPostDto } from './dto/create-job-post.dto';
 import { UpdateJobPostDto } from './dto/update-job-post.dto';
 import { IsRecruiterOrAdminGuard } from './guards/is-recruiter-or-admin/is-recruiter-or-admin.guard';
 import { IsOwnerOrAdminGuard } from './guards/is-owner-or-admin/is-owner-or-admin.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 
 @Controller('job-posts')
+@UseGuards(JwtAuthGuard)
 export class JobPostController {
     constructor(private readonly jobPostService: JobPostService) { }
 
     @Get()
-    findAll() {
-        return this.jobPostService.findAll();
+    findAll(@Request() req) {
+        console.log("req", req);
+        return this.jobPostService.findAll(req.user.userId);
     }
+
 
     @Get('testing-api')
     testing_api() {

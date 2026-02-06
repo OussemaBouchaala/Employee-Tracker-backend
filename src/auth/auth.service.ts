@@ -139,6 +139,4 @@ export class AuthService {
   async verifyEmail(token: string) {
     return this.userService.verifyUser(token);
   }
-
-
 }

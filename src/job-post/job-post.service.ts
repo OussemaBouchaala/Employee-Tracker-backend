@@ -113,8 +113,9 @@ export class JobPostService {
     return this.jobPostRepository.save(jobPost);
   }
 
-  findAll(): Promise<JobPost[]> {
+  findAll(userId: string): Promise<JobPost[]> {
     return this.jobPostRepository.find({
+      where: { recruiter: { id: Number(userId) } },
       relations: ['recruiter', 'jobPostCandidates'],
     });
   }

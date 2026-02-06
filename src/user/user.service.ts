@@ -28,6 +28,13 @@ export class UserService {
     private userRepository: Repository<User>,
   ) { }
 
+  async findAllRecruiters(): Promise<Recruiter[]> {
+    return this.recruiterRepository.find({
+      where: {
+        approvalStatus: ApprovalStatus.APPROVED
+      }
+    });
+  }
   // 1. User CRUD operations
   async findAllUsers(): Promise<User[]> {
     const users = await this.userRepository.find({
@@ -52,8 +59,8 @@ export class UserService {
   async updateUser(
     userId: string, 
     updateData: UpdateCandidateDto | UpdateRecruiterDto,
-    profilePicture?: Express.Multer.File,
-    cv?: Express.Multer.File
+    cv?: Express.Multer.File,
+    profilePicture?: Express.Multer.File
   ): Promise<User> {
     const user = await this.userRepository.preload({ id: Number(userId), ...updateData });
     if (!user) {
